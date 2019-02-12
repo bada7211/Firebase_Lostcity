@@ -1,10 +1,12 @@
 package com.example.firebasetest;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -14,14 +16,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GestActivity extends AppCompatActivity {
+public class GestActivity extends AppCompatActivity implements GridAdapter.ListBtnClickListener {
     String room_name;
     FirebaseDatabase database;
     DatabaseReference roomDb;
     TextView round;
+    GridView gridView;
+    GridAdapter gridAdapter;
+    ArrayList<String> myDeck_list = new ArrayList<String>();
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gest);
@@ -67,4 +74,8 @@ public class GestActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onListBtnClick(int position) {
+
+    }
 }

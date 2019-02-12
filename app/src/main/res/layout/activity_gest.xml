@@ -349,11 +349,11 @@
         android:weightSum="2">
 
         <GridView
-            android:id="@+id/myDeck"
+            android:id="@+id/myDeckBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:numColumns="4"
+            android:numColumns="8"
             android:stretchMode="columnWidth" />
     </LinearLayout>
 </LinearLayout>
