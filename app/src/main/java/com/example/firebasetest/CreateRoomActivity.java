@@ -41,7 +41,7 @@ public class CreateRoomActivity extends Activity {
         String name = room_txt.getText().toString();
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("RoomName", name);
-        startActivity(intent);
+        startActivityForResult(intent,1);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference roomDb = database.getReference("RoomList");

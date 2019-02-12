@@ -344,87 +344,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginRight="20dp"
         android:layout_weight="4"
         android:orientation="vertical"
         android:weightSum="2">
 
-        <LinearLayout
+        <GridView
+            android:id="@+id/myDeck"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/myDeck1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/myDeck5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-
-            <ImageButton
-                android:id="@+id/myDeck8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1"
-                app:srcCompat="@color/colorPrimaryDark" />
-        </LinearLayout>
+            android:gravity="center"
+            android:numColumns="4"
+            android:stretchMode="columnWidth" />
     </LinearLayout>
 </LinearLayout>

@@ -29,14 +29,11 @@ public class MainActivity extends AppCompatActivity {
     ListView roomView;
     FirebaseDatabase database;
     DatabaseReference roomDb;
-    public static MainActivity mainActivity;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainActivity = MainActivity.this;
 
         roomView = (ListView) findViewById(R.id.roomList);
 
@@ -116,6 +113,6 @@ public class MainActivity extends AppCompatActivity {
     public void createRoom_Start(View v) {
         Intent intent = new Intent(this, CreateRoomActivity.class);
         intent.putExtra("RoomCreateMsg", "방 만들기");
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 }
