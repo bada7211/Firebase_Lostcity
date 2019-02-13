@@ -21,6 +21,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
     private ArrayList<String> numbers = new ArrayList<String>();
 
     Button cardButton;
+    String cardName;
 
     GridAdapter(Context context, int resource, ArrayList<String> list, ListBtnClickListener clickListener) {
         super(context, resource, list);
@@ -32,7 +33,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
     }
 
     public interface ListBtnClickListener {
-        void onListBtnClick(int position) ;
+        void onListBtnClick(int position, View v, String card_name) ;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -49,9 +50,18 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
         cardButton = (Button) convertView.findViewById(R.id.myDeckCard);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
+        cardName = (String) numbers.get(pos);
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
         cardButton.setText(number);
+//        cardButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                v.setSelected(true);
+//            }
+//        });
+        cardButton.setTag(pos);
+        cardButton.setOnClickListener(this);
 
         return convertView;
 
@@ -59,6 +69,9 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출.
+        if (this.listBtnClickListener != null) {
+            this.listBtnClickListener.onListBtnClick((int)v.getTag(), v, cardName) ;
+        }
     }
 }

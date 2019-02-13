@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         Intent intent = getIntent();
         room_name = intent.getStringExtra("RoomName");
         round = (TextView) findViewById(R.id.round);
+        gridView = (GridView) findViewById(R.id.myDeckBoard);
         round.setText("On");
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference("RoomList");
@@ -46,7 +48,23 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     if (dataSnapshot.getValue().toString().equals("Start")) {
                         round.setText("Start");
                         FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-                        DatabaseReference roomDb2 = database2.getReference("RoomList");
+                        DatabaseReference roomDb2 = database2.getReference().child("RoomList").child(room_name).child("Gest").child("Card");
+                        roomDb2.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    myDeck_list.add(child.getValue().toString());
+                                }
+                                Collections.sort(myDeck_list);
+                                gridAdapter = new GridAdapter(GestActivity.this,R.layout.my_deck,myDeck_list,GestActivity.this);
+                                gridView.setAdapter(gridAdapter);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        roomDb2 = database2.getReference().child("RoomList");
                         roomDb2.child(room_name).child("State").setValue("1ROUND");
                         round.setText("1ROUND");
                     }
@@ -75,7 +93,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     @Override
-    public void onListBtnClick(int position) {
+    public void onListBtnClick(int position, View v, String card_name) {
 
     }
 }
