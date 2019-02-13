@@ -178,8 +178,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                                     myDev_list.add(child.getValue().toString());
                                 }
                                 Collections.sort(myDev_list);
-                                if(color.equals("R")) listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
-                                else listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item2,myDev_list,R.drawable.r_back);
+                                listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
                                 curListView.setAdapter(listAdapter);
                                 curSelView.setSelected(false);
                                 curListView.setEnabled(false);
