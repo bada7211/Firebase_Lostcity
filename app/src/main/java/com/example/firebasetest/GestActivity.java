@@ -93,7 +93,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     @Override
-    public void onListBtnClick(int position, View v, String card_name) {
+    public void onListBtnClick(int position, View v) {
 
     }
 }

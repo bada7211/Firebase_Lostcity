@@ -1,11 +1,14 @@
 package com.example.firebasetest;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,16 +29,22 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     String room_name;
     FirebaseDatabase database;
     DatabaseReference roomDb;
+
     TextView round;
     GridView gridView;
     GridAdapter gridAdapter;
     ArrayList<String> myDeck_list = new ArrayList<String>();
+
+    ListView listView_r,listView_g,listView_w,listView_b,listView_y;
+    ListAdapter listAdapter;
+    ArrayList<String> myDev_list = new ArrayList<String>();
 
     Boolean my_tern = false;
     String my_state = "ready";
     String my_selCard = "";
     View preSelView;
     View curSelView;
+    ListView curListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,13 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         round = (TextView) findViewById(R.id.round);
         round.setText("READY");
         gridView = (GridView) findViewById(R.id.myDeckBoard);
+        listView_r =  (ListView) findViewById(R.id.rCard_me);
+        listView_g =  (ListView) findViewById(R.id.gCard_me);
+        listView_w =  (ListView) findViewById(R.id.wCard_me);
+        listView_b =  (ListView) findViewById(R.id.bCard_me);
+        listView_y =  (ListView) findViewById(R.id.yCard_me);
+
+        setDevClickListener();
 
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference().child("RoomList").child(room_name).child("State");
@@ -79,9 +95,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         roomDb2.child(room_name).child("State").setValue("Start");
                     }
                     //1라운드 호스트 카드버리기 턴
-//                    if(dataSnapshot.getValue().toString().equals("1ROUND")){
-//
-//                    }
+                    if(dataSnapshot.getValue().toString().equals("1ROUND")){
+                        my_state = "SelCard";
+                    }
                 }
             }
             @Override
@@ -107,18 +123,85 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     @Override
-    public void onListBtnClick(int position, View v, String card_name) {
-        if(curSelView==null) {
-            ((Button) v).setSelected(true);
-            curSelView = v;
+    public void onListBtnClick(int position, View v) {
+        if(my_state.equals("SelCard")||my_state.equals("Selected")) {
+            if (curSelView == null) {
+                ((Button) v).setSelected(true);
+                curSelView = v;
+            } else {
+                ((Button) v).setSelected(true);
+                preSelView = curSelView;
+                curSelView = v;
+                if (curSelView != preSelView) ((Button) preSelView).setSelected(false);
+            }
+            my_selCard = myDeck_list.get(position);
+            my_state = "Selected";
+            if((my_selCard.contains("R"))) {
+                curListView = listView_r;
+                listView_r.setEnabled(true);
+            }
+            if((my_selCard.contains("G"))) {
+                curListView = listView_g;
+                listView_g.setEnabled(true);
+            }
+            if((my_selCard.contains("W"))) {
+                curListView = listView_w;
+                listView_w.setEnabled(true);
+            }
+            if((my_selCard.contains("B"))) {
+                curListView = listView_b;
+                listView_b.setEnabled(true);
+            }
+            if((my_selCard.contains("Y"))) {
+                curListView = listView_y;
+                listView_y.setEnabled(true);
+            }
         }
-        else {
-            ((Button) v).setSelected(true);
-            preSelView = curSelView;
-            curSelView = v;
-            if(curSelView!=preSelView) ((Button) preSelView).setSelected(false);
-        }
-        my_selCard = card_name;
-        my_state = "SelCard";
+    }
+
+    public void setDevClickListener(){
+        View.OnTouchListener dev_touch = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(my_state.equals("Selected")) {
+                        FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
+                        DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host");
+                        final String color = Character.toString(my_selCard.charAt(0));
+                        devDb.child("DevCard").child(color).child(my_selCard).setValue(my_selCard);
+                        devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
+                        devDb.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                myDev_list.clear();
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    myDev_list.add(child.getValue().toString());
+                                }
+                                Collections.sort(myDev_list);
+                                if(color.equals("R")) listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
+                                else listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item2,myDev_list,R.drawable.r_back);
+                                curListView.setAdapter(listAdapter);
+                                curSelView.setSelected(false);
+                                curListView.setEnabled(false);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                    }
+                }
+                return false;
+            }
+        };
+        listView_r.setOnTouchListener(dev_touch);
+        listView_g.setOnTouchListener(dev_touch);
+        listView_w.setOnTouchListener(dev_touch);
+        listView_b.setOnTouchListener(dev_touch);
+        listView_y.setOnTouchListener(dev_touch);
+        listView_r.setEnabled(false);
+        listView_g.setEnabled(false);
+        listView_w.setEnabled(false);
+        listView_b.setEnabled(false);
+        listView_y.setEnabled(false);
     }
 }

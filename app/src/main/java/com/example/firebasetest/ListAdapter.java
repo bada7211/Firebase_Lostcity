@@ -12,27 +12,27 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
+public class ListAdapter extends ArrayAdapter {
 
     // 생성자로부터 전달된 resource id 값을 저장.
     int resourceId ;
-    // 생성자로부터 전달된 ListBtnClickListener  저장.
-    private ListBtnClickListener listBtnClickListener;
+    int back_resourceId ;
+
     private ArrayList<String> numbers = new ArrayList<String>();
 
     Button cardButton;
+    String cardName;
 
-    GridAdapter(Context context, int resource, ArrayList<String> list, ListBtnClickListener clickListener) {
+    ListAdapter(Context context, int resource, ArrayList<String> list, int back_resource) {
         super(context, resource, list);
         numbers = list;
         // resource id 값 복사. (super로 전달된 resource를 참조할 방법이 없음.)
         this.resourceId = resource ;
-
-        this.listBtnClickListener = clickListener ;
+        this.back_resourceId = back_resource;
     }
 
     public interface ListBtnClickListener {
-        void onListBtnClick(int position, View v) ;
+        void onListBtnClick(int position, View v, String card_name) ;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -46,31 +46,17 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
         }
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
-        cardButton = (Button) convertView.findViewById(R.id.myDeckCard);
+        cardButton = (Button) convertView.findViewById(R.id.myDevCard);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        final String cardName = (String) numbers.get(pos);
+        cardName = (String) numbers.get(pos);
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
         cardButton.setText(number);
-//        cardButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                v.setSelected(true);
-//            }
-//        });
+        cardButton.setBackgroundResource(back_resourceId);
         cardButton.setTag(pos);
-        cardButton.setOnClickListener(this);
 
         return convertView;
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출.
-        if (this.listBtnClickListener != null) {
-            this.listBtnClickListener.onListBtnClick((int)v.getTag(), v) ;
-        }
     }
 }
