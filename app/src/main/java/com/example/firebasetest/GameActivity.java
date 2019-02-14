@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
 
     ListView myList_r,myList_g,myList_w,myList_b,myList_y;
     ListAdapter listAdapter;
-    Button board_r,board_g,board_w,board_b,board_y;
+    Button board_r,board_g,board_w,board_b,board_y,board_deck;
     Boolean my_tern = false;
     String my_state = "ready";
     String my_selCard = "";
@@ -69,6 +69,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         board_w = (Button) findViewById(R.id.wBoard);
         board_b = (Button) findViewById(R.id.bBoard);
         board_y = (Button) findViewById(R.id.yBoard);
+        board_deck = (Button) findViewById(R.id.deckBoard);
 
         setDevClickListener();
         setBoardClickListener();
@@ -91,16 +92,17 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         roomDb2.child(room_name).child("Game").child("Round").setValue(1);
                         Card card = new Card();
                         for(int i=0; i<8; i++) {
-                            myDeck_list.add(card.card_deck.peek());
+//                            myDeck_list.add(card.card_deck.peek());
                             roomDb2.child(room_name).child("Host").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
                             roomDb2.child(room_name).child("Gest").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
                         }
                         for(int i=1; i<45; i++) {
                             roomDb2.child(room_name).child("Game").child("Deck").child(""+i+"").setValue(card.card_deck.pop());
                         }
-                        Collections.sort(myDeck_list);
-                        gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
-                        gridView.setAdapter(gridAdapter);
+                        updateMyDeck();
+//                        Collections.sort(myDeck_list);
+//                        gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
+//                        gridView.setAdapter(gridAdapter);
 
                         round.setText("Start");
                         roomDb2.child(room_name).child("State").setValue("Start");
@@ -166,11 +168,16 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
                     DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name);
                     final String color = Character.toString(my_selCard.charAt(0));
+                    devDb.child("Host").child("Card").child(my_selCard).removeValue();
                     devDb.child("Board").child(color).push().setValue(my_selCard);
                     curSelView.setSelected(false);
+                    setBoardEnable(true);
                     curBoard.setEnabled(false);
-                    my_state = "SetBoardCard";
+                    my_state = "SetCardBoard";
                     roomDb.setValue("1H"+color+"setBoard");
+                }
+                if(my_state.contains("SetCard")) {
+                    //TODO:: 보드에서 카드먹는거 구현
                 }
             }
         };
@@ -179,6 +186,10 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         board_w.setOnClickListener(board_click);
         board_b.setOnClickListener(board_click);
         board_y.setOnClickListener(board_click);
+    }
+
+    public void setDeckClickListener(){
+        //TODO:: 덱클릭하면 먹는거 구현해야돼
     }
 
     public void setDevClickListener(){
@@ -190,6 +201,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
                         DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host");
                         final String color = Character.toString(my_selCard.charAt(0));
+                        devDb.child("Card").child(my_selCard).removeValue();
                         devDb.child("DevCard").child(color).child(my_selCard).setValue(my_selCard);
                         devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
                         devDb.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -204,8 +216,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                                 curListView.setAdapter(listAdapter);
                                 curSelView.setSelected(false);
                                 curListView.setEnabled(false);
-                                my_state = "SetDevCard";
+                                my_state = "SetCardDev";
                                 roomDb.setValue("1H"+color+"setDev");
+                                setBoardEnable(true);
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -249,5 +262,35 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             curListView = myList_y;
             curBoard = board_y;
         }
+    }
+
+    public void setBoardEnable(Boolean set) {
+        if(!(board_r.getText().equals(""))) board_r.setEnabled(set);
+        if(!(board_g.getText().equals(""))) board_g.setEnabled(set);
+        if(!(board_w.getText().equals(""))) board_w.setEnabled(set);
+        if(!(board_b.getText().equals(""))) board_b.setEnabled(set);
+        if(!(board_y.getText().equals(""))) board_y.setEnabled(set);
+        board_deck.setEnabled(set);
+    }
+
+    public void updateMyDeck() {
+        FirebaseDatabase deck_base = FirebaseDatabase.getInstance();
+        DatabaseReference deckDb = deck_base.getReference().child("RoomList").child(room_name).child("Host").child("Card");
+        deckDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                myDeck_list.clear();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    myDeck_list.add(child.getValue().toString());
+                }
+                Collections.sort(myDeck_list);
+                gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
+                gridView.setAdapter(gridAdapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

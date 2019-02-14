@@ -176,41 +176,41 @@
             android:layout_weight="1"
             android:background="@drawable/r_back"
             android:enabled="false"
-            android:text="1"
-            android:textColor="@color/white"/>
+            android:text=""
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/gBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:background="@drawable/r_back"
             android:enabled="false"
-            android:text="1"
-            android:textColor="@color/white"/>
+            android:text=""
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/wBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:background="@drawable/r_back"
             android:enabled="false"
-            android:text="1"
-            android:textColor="@color/white"/>
+            android:text=""
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/bBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:background="@drawable/r_back"
             android:enabled="false"
-            android:text="1"
-            android:textColor="@color/white"/>
+            android:text=""
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/yBoard"
@@ -220,7 +220,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/r_back"
             android:enabled="false"
-            android:text="1"
+            android:text=""
             android:textColor="@color/white"/>
 
         <RelativeLayout
@@ -240,6 +240,7 @@
                 android:id="@+id/deck_count"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:enabled="false"
                 android:gravity="center"
                 android:text="30"
                 android:textSize="18sp" />
