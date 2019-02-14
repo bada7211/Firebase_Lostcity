@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class GestActivity extends AppCompatActivity implements GridAdapter.ListBtnClickListener {
     String room_name;
@@ -30,9 +32,12 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     GridView gridView;
     GridAdapter gridAdapter;
     ListView opntList_r,opntList_g,opntList_w,opntList_b,opntList_y;
+    Button board_r,board_g,board_w,board_b,board_y;
     ListAdapter listAdapter;
     ListView curListView;
     ListView preListView;
+    Button curBoard;
+    Button preBoard;
 
     ArrayList<String> myDeck_list = new ArrayList<String>();
     @Override
@@ -48,6 +53,11 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         opntList_w =  (ListView) findViewById(R.id.wCard_opnt);
         opntList_b =  (ListView) findViewById(R.id.bCard_opnt);
         opntList_y =  (ListView) findViewById(R.id.yCard_opnt);
+        board_r = (Button) findViewById(R.id.rBoard);
+        board_g = (Button) findViewById(R.id.gBoard);
+        board_w = (Button) findViewById(R.id.wBoard);
+        board_b = (Button) findViewById(R.id.bBoard);
+        board_y = (Button) findViewById(R.id.yBoard);
 
         round.setText("On");
         database = FirebaseDatabase.getInstance();
@@ -57,7 +67,8 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    if (dataSnapshot.getValue().toString().equals("Start")) {
+                    String game_state = dataSnapshot.getValue().toString();
+                    if (game_state.equals("Start")) {
                         round.setText("Start");
                         FirebaseDatabase database2 = FirebaseDatabase.getInstance();
                         DatabaseReference roomDb2 = database2.getReference().child("RoomList").child(room_name).child("Gest").child("Card");
@@ -80,7 +91,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         roomDb2.child(room_name).child("State").setValue("1ROUND");
                         round.setText("1ROUND");
                     }
-                    if(dataSnapshot.getValue().toString().contains("setDev")){
+                    if(game_state.contains("setDev")){
                         FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
                         final String color = Character.toString(dataSnapshot.getValue().toString().charAt(2));
                         DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
@@ -95,6 +106,24 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                                 findOpntCurList(color);
                                 listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
                                 curListView.setAdapter(listAdapter);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                    }
+                    if(game_state.contains("setBoard")){
+                        FirebaseDatabase board_base = FirebaseDatabase.getInstance();
+                        final String color = Character.toString(game_state.charAt(2));
+                        findOpntCurList(color);
+                        DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name).child("Board").child(color);
+                        boardDb.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    curBoard.setText(child.getValue().toString());
+                                    break;
+                                }
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -131,10 +160,25 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     public void findOpntCurList(String color) {
-        if(color.equals("R")) curListView = opntList_r;
-        if(color.equals("G")) curListView = opntList_g;
-        if(color.equals("W")) curListView = opntList_w;
-        if(color.equals("B")) curListView = opntList_b;
-        if(color.equals("Y")) curListView = opntList_y;
+        if(color.equals("R")) {
+            curListView = opntList_r;
+            curBoard = board_r;
+        }
+        if(color.equals("G")) {
+            curListView = opntList_g;
+            curBoard = board_g;
+        }
+        if(color.equals("W")) {
+            curListView = opntList_w;
+            curBoard = board_w;
+        }
+        if(color.equals("B")) {
+            curListView = opntList_b;
+            curBoard = board_b;
+        }
+        if(color.equals("Y")) {
+            curListView = opntList_y;
+            curBoard = board_y;
+        }
     }
 }

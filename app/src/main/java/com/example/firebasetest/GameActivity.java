@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
 
     ListView myList_r,myList_g,myList_w,myList_b,myList_y;
     ListAdapter listAdapter;
-
+    Button board_r,board_g,board_w,board_b,board_y;
     Boolean my_tern = false;
     String my_state = "ready";
     String my_selCard = "";
@@ -47,6 +47,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     View curSelView;
     ListView curListView;
     ListView preListView;
+    Button curBoard;
+    Button preBoard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +64,14 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         myList_w =  (ListView) findViewById(R.id.wCard_me);
         myList_b =  (ListView) findViewById(R.id.bCard_me);
         myList_y =  (ListView) findViewById(R.id.yCard_me);
+        board_r = (Button) findViewById(R.id.rBoard);
+        board_g = (Button) findViewById(R.id.gBoard);
+        board_w = (Button) findViewById(R.id.wBoard);
+        board_b = (Button) findViewById(R.id.bBoard);
+        board_y = (Button) findViewById(R.id.yBoard);
 
         setDevClickListener();
+        setBoardClickListener();
 
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference().child("RoomList").child(room_name).child("State");
@@ -71,8 +79,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
+                    String game_state = dataSnapshot.getValue().toString();
                     //카드 나눠주기 시작
-                    if (dataSnapshot.getValue().toString().equals("On")) {
+                    if (game_state.equals("On")) {
                         round.setText("On");
                         FirebaseDatabase database2 = FirebaseDatabase.getInstance();
                         DatabaseReference roomDb2 = database2.getReference("RoomList");
@@ -97,7 +106,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         roomDb2.child(room_name).child("State").setValue("Start");
                     }
                     //1라운드 호스트 카드버리기 턴
-                    if(dataSnapshot.getValue().toString().equals("1ROUND")){
+                    if(game_state.equals("1ROUND")){
                         my_state = "SelCard";
                     }
                 }
@@ -140,9 +149,36 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             my_state = "Selected";
             findMyCurList(Character.toString(my_selCard.charAt(0)));
             if(preListView!=null) preListView.setEnabled(false);
+            if(preBoard!=null) preBoard.setEnabled(false);
             preListView = curListView;
+            preBoard = curBoard;
             curListView.setEnabled(true);
+            curBoard.setEnabled(true);
         }
+    }
+
+    public void setBoardClickListener(){
+        View.OnClickListener board_click = new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(my_state.equals("Selected")) {
+                    curBoard.setText(my_selCard);
+                    FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
+                    DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name);
+                    final String color = Character.toString(my_selCard.charAt(0));
+                    devDb.child("Board").child(color).push().setValue(my_selCard);
+                    curSelView.setSelected(false);
+                    curBoard.setEnabled(false);
+                    my_state = "SetBoardCard";
+                    roomDb.setValue("1H"+color+"setBoard");
+                }
+            }
+        };
+        board_r.setOnClickListener(board_click);
+        board_g.setOnClickListener(board_click);
+        board_w.setOnClickListener(board_click);
+        board_b.setOnClickListener(board_click);
+        board_y.setOnClickListener(board_click);
     }
 
     public void setDevClickListener(){
@@ -191,11 +227,27 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         myList_b.setEnabled(false);
         myList_y.setEnabled(false);
     }
+
     public void findMyCurList(String color) {
-        if(color.equals("R")) curListView = myList_r;
-        if(color.equals("G")) curListView = myList_g;
-        if(color.equals("W")) curListView = myList_w;
-        if(color.equals("B")) curListView = myList_b;
-        if(color.equals("Y")) curListView = myList_y;
+        if(color.equals("R")) {
+            curListView = myList_r;
+            curBoard = board_r;
+        }
+        if(color.equals("G")) {
+            curListView = myList_g;
+            curBoard = board_g;
+        }
+        if(color.equals("W")) {
+            curListView = myList_w;
+            curBoard = board_w;
+        }
+        if(color.equals("B")) {
+            curListView = myList_b;
+            curBoard = board_b;
+        }
+        if(color.equals("Y")) {
+            curListView = myList_y;
+            curBoard = board_y;
+        }
     }
 }

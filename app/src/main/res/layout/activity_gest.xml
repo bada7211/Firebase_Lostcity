@@ -168,51 +168,74 @@
         android:layout_weight="2.2"
         android:orientation="horizontal">
 
-        <ImageButton
+        <Button
             android:id="@+id/rBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:layout_weight="1"
-            app:srcCompat="@color/colorPrimary" />
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
-        <ImageButton
+        <Button
             android:id="@+id/gBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@color/colorPrimary" />
+            android:layout_margin="10dp"
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text="1"
+            android:textColor="@color/white"/>
 
-        <ImageButton
+        <Button
             android:id="@+id/wBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@color/colorPrimary" />
+            android:layout_margin="10dp"
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text="1"
+            android:textColor="@color/white"/>
 
-        <ImageButton
+        <Button
             android:id="@+id/bBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@color/colorPrimary" />
+            android:layout_margin="10dp"
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text="1"
+            android:textColor="@color/white"/>
 
-        <ImageButton
+        <Button
             android:id="@+id/yBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@color/colorPrimary" />
+            android:layout_margin="10dp"
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text="1"
+            android:textColor="@color/white"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <ImageButton
+            <Button
                 android:id="@+id/deckBoard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:srcCompat="@color/colorPrimary" />
+                android:layout_margin="10dp"
+                android:background="@drawable/r_back"
+                android:enabled="false"/>
 
             <TextView
                 android:id="@+id/deck_count"
