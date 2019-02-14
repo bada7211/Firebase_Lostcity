@@ -37,7 +37,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     GridAdapter gridAdapter;
     ArrayList<String> myDeck_list = new ArrayList<String>();
 
-    ListView listView_r,listView_g,listView_w,listView_b,listView_y;
+    ListView myList_r,myList_g,myList_w,myList_b,myList_y;
     ListAdapter listAdapter;
 
     Boolean my_tern = false;
@@ -57,11 +57,11 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         round = (TextView) findViewById(R.id.round);
         round.setText("READY");
         gridView = (GridView) findViewById(R.id.myDeckBoard);
-        listView_r =  (ListView) findViewById(R.id.rCard_me);
-        listView_g =  (ListView) findViewById(R.id.gCard_me);
-        listView_w =  (ListView) findViewById(R.id.wCard_me);
-        listView_b =  (ListView) findViewById(R.id.bCard_me);
-        listView_y =  (ListView) findViewById(R.id.yCard_me);
+        myList_r =  (ListView) findViewById(R.id.rCard_me);
+        myList_g =  (ListView) findViewById(R.id.gCard_me);
+        myList_w =  (ListView) findViewById(R.id.wCard_me);
+        myList_b =  (ListView) findViewById(R.id.bCard_me);
+        myList_y =  (ListView) findViewById(R.id.yCard_me);
 
         setDevClickListener();
 
@@ -138,36 +138,10 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             }
             my_selCard = myDeck_list.get(position);
             my_state = "Selected";
-            if((my_selCard.contains("R"))) {
-                curListView = listView_r;
-                if(preListView!=null) preListView.setEnabled(false);
-                preListView = curListView;
-                curListView.setEnabled(true);
-            }
-            if((my_selCard.contains("G"))) {
-                curListView = listView_g;
-                if(preListView!=null) preListView.setEnabled(false);
-                preListView = curListView;
-                curListView.setEnabled(true);
-            }
-            if((my_selCard.contains("W"))) {
-                curListView = listView_w;
-                if(preListView!=null) preListView.setEnabled(false);
-                preListView = curListView;
-                curListView.setEnabled(true);
-            }
-            if((my_selCard.contains("B"))) {
-                curListView = listView_b;
-                if(preListView!=null) preListView.setEnabled(false);
-                preListView = curListView;
-                curListView.setEnabled(true);
-            }
-            if((my_selCard.contains("Y"))) {
-                curListView = listView_y;
-                if(preListView!=null) preListView.setEnabled(false);
-                preListView = curListView;
-                curListView.setEnabled(true);
-            }
+            findMyCurList(Character.toString(my_selCard.charAt(0)));
+            if(preListView!=null) preListView.setEnabled(false);
+            preListView = curListView;
+            curListView.setEnabled(true);
         }
     }
 
@@ -206,15 +180,22 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                 return false;
             }
         };
-        listView_r.setOnTouchListener(dev_touch);
-        listView_g.setOnTouchListener(dev_touch);
-        listView_w.setOnTouchListener(dev_touch);
-        listView_b.setOnTouchListener(dev_touch);
-        listView_y.setOnTouchListener(dev_touch);
-        listView_r.setEnabled(false);
-        listView_g.setEnabled(false);
-        listView_w.setEnabled(false);
-        listView_b.setEnabled(false);
-        listView_y.setEnabled(false);
+        myList_r.setOnTouchListener(dev_touch);
+        myList_g.setOnTouchListener(dev_touch);
+        myList_w.setOnTouchListener(dev_touch);
+        myList_b.setOnTouchListener(dev_touch);
+        myList_y.setOnTouchListener(dev_touch);
+        myList_r.setEnabled(false);
+        myList_g.setEnabled(false);
+        myList_w.setEnabled(false);
+        myList_b.setEnabled(false);
+        myList_y.setEnabled(false);
+    }
+    public void findMyCurList(String color) {
+        if(color.equals("R")) curListView = myList_r;
+        if(color.equals("G")) curListView = myList_g;
+        if(color.equals("W")) curListView = myList_w;
+        if(color.equals("B")) curListView = myList_b;
+        if(color.equals("Y")) curListView = myList_y;
     }
 }
