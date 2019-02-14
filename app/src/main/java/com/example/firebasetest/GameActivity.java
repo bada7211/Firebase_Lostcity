@@ -194,7 +194,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                                 curListView.setAdapter(listAdapter);
                                 curSelView.setSelected(false);
                                 curListView.setEnabled(false);
-                                Log.d("adapter",color);
+                                my_state = "SetDevCard";
+                                roomDb.setValue("1H"+color+"setDev");
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -28,6 +29,11 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     TextView round;
     GridView gridView;
     GridAdapter gridAdapter;
+    ListView opntList_r,opntList_g,opntList_w,opntList_b,opntList_y;
+    ListAdapter listAdapter;
+    ListView curListView;
+    ListView preListView;
+
     ArrayList<String> myDeck_list = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,12 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         room_name = intent.getStringExtra("RoomName");
         round = (TextView) findViewById(R.id.round);
         gridView = (GridView) findViewById(R.id.myDeckBoard);
+        opntList_r =  (ListView) findViewById(R.id.rCard_opnt);
+        opntList_g =  (ListView) findViewById(R.id.gCard_opnt);
+        opntList_w =  (ListView) findViewById(R.id.wCard_opnt);
+        opntList_b =  (ListView) findViewById(R.id.bCard_opnt);
+        opntList_y =  (ListView) findViewById(R.id.yCard_opnt);
+
         round.setText("On");
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference("RoomList");
@@ -68,6 +80,27 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         roomDb2.child(room_name).child("State").setValue("1ROUND");
                         round.setText("1ROUND");
                     }
+                    if(dataSnapshot.getValue().toString().contains("setDev")){
+                        FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
+                        final String color = Character.toString(dataSnapshot.getValue().toString().charAt(2));
+                        DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
+                        devDb.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                ArrayList<String> opntDev_list = new ArrayList<String>();
+                                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                    opntDev_list.add(child.getValue().toString());
+                                }
+                                Collections.sort(opntDev_list);
+                                findOpntCurList(color);
+                                listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
+                                curListView.setAdapter(listAdapter);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                    }
                 }
             }
             @Override
@@ -95,5 +128,13 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     @Override
     public void onListBtnClick(int position, View v) {
 
+    }
+
+    public void findOpntCurList(String color) {
+        if(color.equals("R")) curListView = opntList_r;
+        if(color.equals("G")) curListView = opntList_g;
+        if(color.equals("W")) curListView = opntList_w;
+        if(color.equals("B")) curListView = opntList_b;
+        if(color.equals("Y")) curListView = opntList_y;
     }
 }

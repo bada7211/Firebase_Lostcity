@@ -354,6 +354,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:numColumns="8"
-            android:stretchMode="spacingWidth" />
+            android:stretchMode="columnWidth" />
     </LinearLayout>
 </LinearLayout>
