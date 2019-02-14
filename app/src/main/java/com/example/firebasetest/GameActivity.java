@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -37,7 +39,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
 
     ListView listView_r,listView_g,listView_w,listView_b,listView_y;
     ListAdapter listAdapter;
-    ArrayList<String> myDev_list = new ArrayList<String>();
 
     Boolean my_tern = false;
     String my_state = "ready";
@@ -45,6 +46,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     View preSelView;
     View curSelView;
     ListView curListView;
+    ListView preListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,23 +140,33 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             my_state = "Selected";
             if((my_selCard.contains("R"))) {
                 curListView = listView_r;
-                listView_r.setEnabled(true);
+                if(preListView!=null) preListView.setEnabled(false);
+                preListView = curListView;
+                curListView.setEnabled(true);
             }
             if((my_selCard.contains("G"))) {
                 curListView = listView_g;
-                listView_g.setEnabled(true);
+                if(preListView!=null) preListView.setEnabled(false);
+                preListView = curListView;
+                curListView.setEnabled(true);
             }
             if((my_selCard.contains("W"))) {
                 curListView = listView_w;
-                listView_w.setEnabled(true);
+                if(preListView!=null) preListView.setEnabled(false);
+                preListView = curListView;
+                curListView.setEnabled(true);
             }
             if((my_selCard.contains("B"))) {
                 curListView = listView_b;
-                listView_b.setEnabled(true);
+                if(preListView!=null) preListView.setEnabled(false);
+                preListView = curListView;
+                curListView.setEnabled(true);
             }
             if((my_selCard.contains("Y"))) {
                 curListView = listView_y;
-                listView_y.setEnabled(true);
+                if(preListView!=null) preListView.setEnabled(false);
+                preListView = curListView;
+                curListView.setEnabled(true);
             }
         }
     }
@@ -173,7 +185,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         devDb.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                myDev_list.clear();
+                                ArrayList<String> myDev_list = new ArrayList<String>();
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                                     myDev_list.add(child.getValue().toString());
                                 }
@@ -182,6 +194,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                                 curListView.setAdapter(listAdapter);
                                 curSelView.setSelected(false);
                                 curListView.setEnabled(false);
+                                Log.d("adapter",color);
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
