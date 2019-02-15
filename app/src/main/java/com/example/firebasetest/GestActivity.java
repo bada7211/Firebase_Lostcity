@@ -70,30 +70,15 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     String game_state = dataSnapshot.getValue().toString();
                     if (game_state.equals("Start")) {
                         round.setText("Start");
-                        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-                        DatabaseReference roomDb2 = database2.getReference().child("RoomList").child(room_name).child("Gest").child("Card");
-                        roomDb2.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    myDeck_list.add(child.getValue().toString());
-                                }
-                                Collections.sort(myDeck_list);
-                                gridAdapter = new GridAdapter(GestActivity.this,R.layout.my_deck,myDeck_list,GestActivity.this);
-                                gridView.setAdapter(gridAdapter);
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                        roomDb2 = database2.getReference().child("RoomList");
-                        roomDb2.child(room_name).child("State").setValue("1ROUND");
+                        updateMyDeck();
+                        FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                        DatabaseReference stateDb = state_base.getReference().child("RoomList");
+                        stateDb.child(room_name).child("State").setValue("1ROUND");
                         round.setText("1ROUND");
                     }
                     if(game_state.contains("setDev")){
                         FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
-                        final String color = Character.toString(dataSnapshot.getValue().toString().charAt(2));
+                        final String color = dataSnapshot.getValue().toString().substring(2,3);
                         DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
                         devDb.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -114,14 +99,16 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     }
                     if(game_state.contains("setBoard")){
                         FirebaseDatabase board_base = FirebaseDatabase.getInstance();
-                        final String color = Character.toString(game_state.charAt(2));
+                        final String color = game_state.substring(2,3);
                         findOpntCurList(color);
                         DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name).child("Board").child(color);
                         boardDb.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    curBoard.setText(child.getValue().toString());
+                                    String card = child.getValue().toString();
+                                    if(!(card.contains("1"))&&(card.contains("0"))) curBoard.setText("X");
+                                    else curBoard.setText(card);
                                     break;
                                 }
                             }
@@ -180,5 +167,25 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
             curListView = opntList_y;
             curBoard = board_y;
         }
+    }
+
+    public void updateMyDeck() {
+        FirebaseDatabase deck_base = FirebaseDatabase.getInstance();
+        DatabaseReference deckDb = deck_base.getReference().child("RoomList").child(room_name).child("Gest").child("Card");
+        deckDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                myDeck_list.clear();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    myDeck_list.add(child.getValue().toString());
+                }
+                gridAdapter = new GridAdapter(GestActivity.this,R.layout.my_deck,myDeck_list,GestActivity.this);
+                gridView.setAdapter(gridAdapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

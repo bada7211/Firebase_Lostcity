@@ -21,11 +21,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class GameActivity extends AppCompatActivity implements GridAdapter.ListBtnClickListener {
     String room_name;
@@ -49,6 +53,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     ListView preListView;
     Button curBoard;
     Button preBoard;
+
+    HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,28 +90,24 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     //카드 나눠주기 시작
                     if (game_state.equals("On")) {
                         round.setText("On");
-                        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-                        DatabaseReference roomDb2 = database2.getReference("RoomList");
+                        FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                        DatabaseReference stateDb = state_base.getReference("RoomList");
 //                        Toast.makeText(GameActivity.this, "Start", Toast.LENGTH_SHORT).show();;
-                        roomDb2.child(room_name).child("Game").child("DeckCount").setValue(44);
-                        roomDb2.child(room_name).child("Game").child("Score").setValue("0 : 0");
-                        roomDb2.child(room_name).child("Game").child("Round").setValue(1);
+                        stateDb.child(room_name).child("Game").child("DeckCount").setValue(44);
+                        stateDb.child(room_name).child("Game").child("Score").setValue("0 : 0");
+                        stateDb.child(room_name).child("Game").child("Round").setValue(1);
                         Card card = new Card();
                         for(int i=0; i<8; i++) {
-//                            myDeck_list.add(card.card_deck.peek());
-                            roomDb2.child(room_name).child("Host").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
-                            roomDb2.child(room_name).child("Gest").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
+                            stateDb.child(room_name).child("Host").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
+                            stateDb.child(room_name).child("Gest").child("Card").child(card.card_deck.peek()).setValue(card.card_deck.pop());
                         }
                         for(int i=1; i<45; i++) {
-                            roomDb2.child(room_name).child("Game").child("Deck").child(""+i+"").setValue(card.card_deck.pop());
+                            stateDb.child(room_name).child("Game").child("Deck").child(""+i+"").setValue(card.card_deck.pop());
                         }
                         updateMyDeck();
-//                        Collections.sort(myDeck_list);
-//                        gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
-//                        gridView.setAdapter(gridAdapter);
-
+                        updateBoard();
                         round.setText("Start");
-                        roomDb2.child(room_name).child("State").setValue("Start");
+                        stateDb.child(room_name).child("State").setValue("Start");
                     }
                     //1라운드 호스트 카드버리기 턴
                     if(game_state.equals("1ROUND")){
@@ -149,7 +151,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             }
             my_selCard = myDeck_list.get(position);
             my_state = "Selected";
-            findMyCurList(Character.toString(my_selCard.charAt(0)));
+            findMyCurList(my_selCard.substring(0,1));
             if(preListView!=null) preListView.setEnabled(false);
             if(preBoard!=null) preBoard.setEnabled(false);
             preListView = curListView;
@@ -163,21 +165,58 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         View.OnClickListener board_click = new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                //보드에 카드쌓기
+                if(my_state.contains("SetCard")) {
+                    //TODO:: 보드에서 카드먹는거 구현
+                    curBoard = (Button) v;
+                    String color = findBoardColor(v.getId());
+                    String card = board_stack.get(color).peek();
+                    FirebaseDatabase board_base = FirebaseDatabase.getInstance();
+                    DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
+                    boardDb.child("Host").child("Card").child(card).setValue(card);
+                    boardDb.child("Board").setValue("Rmv"+card);
+                    curBoard.setEnabled(false);
+//                    boardDb.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            int i = 0;
+//                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+//                                String card = child.getValue().toString();
+//                                FirebaseDatabase addDeck_base = FirebaseDatabase.getInstance();
+//                                DatabaseReference addDeckDb = addDeck_base.getReference().child("RoomList").child(room_name).child("Host").child("Card");
+//                                addDeckDb.child(card).setValue(card);
+//                                child.getRef().removeValue();
+//                                curBoard.setEnabled(false);
+//                                break;
+//                            }
+//                        }
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        }
+//                    });
+                }
                 if(my_state.equals("Selected")) {
-                    curBoard.setText(my_selCard);
-                    FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
-                    DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name);
-                    final String color = Character.toString(my_selCard.charAt(0));
-                    devDb.child("Host").child("Card").child(my_selCard).removeValue();
-                    devDb.child("Board").child(color).push().setValue(my_selCard);
+                    FirebaseDatabase board_base = FirebaseDatabase.getInstance();
+                    DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
+                    boardDb.child("Board").setValue("Add"+my_selCard);
+                    boardDb.child("Host").child("Card").child(my_selCard).removeValue();
                     curSelView.setSelected(false);
                     setBoardEnable(true);
                     curBoard.setEnabled(false);
                     my_state = "SetCardBoard";
-                    roomDb.setValue("1H"+color+"setBoard");
-                }
-                if(my_state.contains("SetCard")) {
-                    //TODO:: 보드에서 카드먹는거 구현
+                    roomDb.setValue("1H"+"setBoard");
+//                    if(!(my_selCard.contains("1")) && (my_selCard.contains("0"))) curBoard.setText("X");
+//                    else curBoard.setText(my_selCard);
+//                    FirebaseDatabase board_base = FirebaseDatabase.getInstance();
+//                    DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
+//                    final String color = my_selCard.substring(0,1);
+//                    boardDb.child("Host").child("Card").child(my_selCard).removeValue();
+//                    boardDb.child("Board").child(color).push().setValue(my_selCard);
+//                    curSelView.setSelected(false);
+//                    setBoardEnable(true);
+//                    curBoard.setEnabled(false);
+//                    my_state = "SetCardBoard";
+//                    roomDb.setValue("1H"+color+"setBoard");
                 }
             }
         };
@@ -200,7 +239,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     if(my_state.equals("Selected")) {
                         FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
                         DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host");
-                        final String color = Character.toString(my_selCard.charAt(0));
+                        final String color = my_selCard.substring(0,1);
                         devDb.child("Card").child(my_selCard).removeValue();
                         devDb.child("DevCard").child(color).child(my_selCard).setValue(my_selCard);
                         devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
@@ -264,6 +303,14 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         }
     }
 
+    public  String findBoardColor(int id) {
+        if(id == R.id.rBoard) return "R";
+        if(id == R.id.gBoard) return "G";
+        if(id == R.id.wBoard) return "W";
+        if(id == R.id.bBoard) return "B";
+        else  return "Y";
+    }
+
     public void setBoardEnable(Boolean set) {
         if(!(board_r.getText().equals(""))) board_r.setEnabled(set);
         if(!(board_g.getText().equals(""))) board_g.setEnabled(set);
@@ -283,13 +330,50 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     myDeck_list.add(child.getValue().toString());
                 }
-                Collections.sort(myDeck_list);
                 gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
                 gridView.setAdapter(gridAdapter);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+    public void updateBoard() {
+        board_stack.put("R",new Stack<String>());
+        board_stack.put("G",new Stack<String>());
+        board_stack.put("W",new Stack<String>());
+        board_stack.put("B",new Stack<String>());
+        board_stack.put("Y",new Stack<String>());
+        FirebaseDatabase upboard_base = FirebaseDatabase.getInstance();
+        DatabaseReference upboardDb = upboard_base.getReference().child("RoomList").child(room_name).child("Board");
+        upboardDb.setValue("Empty");
+        upboardDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String board_state = dataSnapshot.getValue().toString();
+                if(!(board_state.equals("Empty"))) {
+                    final String color = board_state.substring(3, 4);
+                    findMyCurList(color);
+                    if (board_state.contains("Add")) {
+                        String card = board_state.substring(3);
+                        board_stack.get(color).push(card);
+                        if (!(card.contains("1")) && (card.contains("0"))) curBoard.setText("X");
+                        else curBoard.setText(card);
+                    } else {
+                        String card = board_stack.get(color).peek();
+                        if (board_stack.get(color).isEmpty()) curBoard.setText("");
+                        else {
+                            if (!(card.contains("1")) && (card.contains("0")))
+                                curBoard.setText("X");
+                            else curBoard.setText(card);
+                            board_stack.get(color).pop();
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }

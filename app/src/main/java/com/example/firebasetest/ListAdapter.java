@@ -52,7 +52,8 @@ public class ListAdapter extends ArrayAdapter {
         cardName = (String) numbers.get(pos);
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
-        cardButton.setText(number);
+        if(!(number.contains("1")) && (number.contains("0"))) cardButton.setText("X");
+        else cardButton.setText(number);
         cardButton.setBackgroundResource(back_resourceId);
         cardButton.setTag(pos);
 
