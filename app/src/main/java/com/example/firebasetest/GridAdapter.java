@@ -54,12 +54,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
         // 아이템 내 각 위젯에 데이터 반영
         if(!(number.contains("1")) && (number.contains("0"))) cardButton.setText("X");
         else cardButton.setText(number);
-//        cardButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                v.setSelected(true);
-//            }
-//        });
+        cardButton.setBackgroundResource(getBackResource(number));
         cardButton.setTag(pos);
         cardButton.setOnClickListener(this);
 
@@ -73,5 +68,13 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
         if (this.listBtnClickListener != null) {
             this.listBtnClickListener.onListBtnClick((int)v.getTag(), v) ;
         }
+    }
+
+    public int getBackResource(String card) {
+        if(card.contains("R")) return R.drawable.r_back;
+        else if(card.contains("G")) return R.drawable.g_back;
+        else if(card.contains("W")) return R.drawable.w_back;
+        else if(card.contains("B")) return R.drawable.b_back;
+        else return R.drawable.y_back;
     }
 }

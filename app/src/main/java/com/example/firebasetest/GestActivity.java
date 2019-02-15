@@ -391,7 +391,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             myDev_list.add(child.getValue().toString());
                         }
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list);
                         curListView.setAdapter(listAdapter);
                         curSelView.setSelected(false);
                         curListView.setEnabled(false);
@@ -414,7 +414,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             opntDev_list.add(child.getValue().toString());
                         }
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list);
                         curListView.setAdapter(listAdapter);
                     }
                 }

@@ -413,7 +413,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             myDev_list.add(child.getValue().toString());
                         }
-                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list);
                         curListView.setAdapter(listAdapter);
                         my_state = "SetCardDev";
                         setBoardEnable(true);
@@ -434,7 +434,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             opntDev_list.add(child.getValue().toString());
                         }
-                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list);
                         curListView.setAdapter(listAdapter);
                     }
                 }

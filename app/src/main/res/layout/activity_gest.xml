@@ -177,8 +177,7 @@
             android:background="@drawable/r_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/gBoard"
@@ -186,7 +185,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/r_back"
+            android:background="@drawable/g_back"
             android:enabled="false"
             android:text=""
             android:textColor="@color/white" />
@@ -197,7 +196,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/r_back"
+            android:background="@drawable/w_back"
             android:enabled="false"
             android:text=""
             android:textColor="@color/white" />
@@ -208,7 +207,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/r_back"
+            android:background="@drawable/b_back"
             android:enabled="false"
             android:text=""
             android:textColor="@color/white" />
@@ -217,12 +216,12 @@
             android:id="@+id/yBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/r_back"
+            android:layout_margin="10dp"
+            android:background="@drawable/y_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/deckBoard"
@@ -230,7 +229,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:background="@drawable/r_back"
+            android:background="@drawable/d_back"
             android:enabled="false"
             android:text=""
             android:textSize="20sp"
