@@ -42,6 +42,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     ArrayList<String> myDeck_list = new ArrayList<String>();
 
     ListView myList_r,myList_g,myList_w,myList_b,myList_y;
+    ListView opntList_r,opntList_g,opntList_w,opntList_b,opntList_y;
     ListAdapter listAdapter;
     Button board_r,board_g,board_w,board_b,board_y,board_deck;
     Boolean my_tern = false;
@@ -70,6 +71,11 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         myList_w =  (ListView) findViewById(R.id.wCard_me);
         myList_b =  (ListView) findViewById(R.id.bCard_me);
         myList_y =  (ListView) findViewById(R.id.yCard_me);
+        opntList_r =  (ListView) findViewById(R.id.rCard_opnt);
+        opntList_g =  (ListView) findViewById(R.id.gCard_opnt);
+        opntList_w =  (ListView) findViewById(R.id.wCard_opnt);
+        opntList_b =  (ListView) findViewById(R.id.bCard_opnt);
+        opntList_y =  (ListView) findViewById(R.id.yCard_opnt);
         board_r = (Button) findViewById(R.id.rBoard);
         board_g = (Button) findViewById(R.id.gBoard);
         board_w = (Button) findViewById(R.id.wBoard);
@@ -106,6 +112,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         }
                         updateMyDeck();
                         updateBoard();
+                        updateDevList();
                         round.setText("Start");
                         stateDb.child(room_name).child("State").setValue("Start");
                     }
@@ -151,7 +158,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             }
             my_selCard = myDeck_list.get(position);
             my_state = "Selected";
-            findMyCurList(my_selCard.substring(0,1));
+            findCurList(my_selCard.substring(0,1),true);
             if(preListView!=null) preListView.setEnabled(false);
             if(preBoard!=null) preBoard.setEnabled(false);
             preListView = curListView;
@@ -176,24 +183,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     boardDb.child("Host").child("Card").child(card).setValue(card);
                     boardDb.child("Board").setValue("Rmv"+card);
                     curBoard.setEnabled(false);
-//                    boardDb.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            int i = 0;
-//                            for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                                String card = child.getValue().toString();
-//                                FirebaseDatabase addDeck_base = FirebaseDatabase.getInstance();
-//                                DatabaseReference addDeckDb = addDeck_base.getReference().child("RoomList").child(room_name).child("Host").child("Card");
-//                                addDeckDb.child(card).setValue(card);
-//                                child.getRef().removeValue();
-//                                curBoard.setEnabled(false);
-//                                break;
-//                            }
-//                        }
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        }
-//                    });
                 }
                 if(my_state.equals("Selected")) {
                     FirebaseDatabase board_base = FirebaseDatabase.getInstance();
@@ -204,19 +193,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     setBoardEnable(true);
                     curBoard.setEnabled(false);
                     my_state = "SetCardBoard";
-                    roomDb.setValue("1H"+"setBoard");
-//                    if(!(my_selCard.contains("1")) && (my_selCard.contains("0"))) curBoard.setText("X");
-//                    else curBoard.setText(my_selCard);
-//                    FirebaseDatabase board_base = FirebaseDatabase.getInstance();
-//                    DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
-//                    final String color = my_selCard.substring(0,1);
-//                    boardDb.child("Host").child("Card").child(my_selCard).removeValue();
-//                    boardDb.child("Board").child(color).push().setValue(my_selCard);
-//                    curSelView.setSelected(false);
-//                    setBoardEnable(true);
-//                    curBoard.setEnabled(false);
-//                    my_state = "SetCardBoard";
-//                    roomDb.setValue("1H"+color+"setBoard");
                 }
             }
         };
@@ -242,27 +218,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         final String color = my_selCard.substring(0,1);
                         devDb.child("Card").child(my_selCard).removeValue();
                         devDb.child("DevCard").child(color).child(my_selCard).setValue(my_selCard);
-                        devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
-                        devDb.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                ArrayList<String> myDev_list = new ArrayList<String>();
-                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    myDev_list.add(child.getValue().toString());
-                                }
-                                Collections.sort(myDev_list);
-                                listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
-                                curListView.setAdapter(listAdapter);
-                                curSelView.setSelected(false);
-                                curListView.setEnabled(false);
-                                my_state = "SetCardDev";
-                                roomDb.setValue("1H"+color+"setDev");
-                                setBoardEnable(true);
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
                     }
                 }
                 return false;
@@ -280,26 +235,36 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         myList_y.setEnabled(false);
     }
 
-    public void findMyCurList(String color) {
+    public void findCurList(String color,Boolean tern) {
         if(color.equals("R")) {
-            curListView = myList_r;
+            if(tern) curListView = myList_r;
+            else curListView = opntList_r;
             curBoard = board_r;
         }
         if(color.equals("G")) {
-            curListView = myList_g;
+            if(tern) curListView = myList_g;
+            else curListView = opntList_g;
             curBoard = board_g;
         }
         if(color.equals("W")) {
-            curListView = myList_w;
+            if(tern) curListView = myList_w;
+            else curListView = opntList_w;
             curBoard = board_w;
         }
         if(color.equals("B")) {
-            curListView = myList_b;
+            if(tern) curListView = myList_b;
+            else curListView = opntList_b;
             curBoard = board_b;
         }
         if(color.equals("Y")) {
-            curListView = myList_y;
+            if(tern) curListView = myList_y;
+            else curListView = opntList_y;
             curBoard = board_y;
+        }
+        if(color.equals("Clear")){
+            curListView = null;
+            curSelView = null;
+            curBoard = null;
         }
     }
 
@@ -335,7 +300,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -347,27 +311,28 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         board_stack.put("Y",new Stack<String>());
         FirebaseDatabase upboard_base = FirebaseDatabase.getInstance();
         DatabaseReference upboardDb = upboard_base.getReference().child("RoomList").child(room_name).child("Board");
-        upboardDb.setValue("Empty");
         upboardDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String board_state = dataSnapshot.getValue().toString();
-                if(!(board_state.equals("Empty"))) {
+                if (dataSnapshot.getValue() != null) {
+                    String board_state = dataSnapshot.getValue().toString();
                     final String color = board_state.substring(3, 4);
-                    findMyCurList(color);
+                    findCurList(color, true);
                     if (board_state.contains("Add")) {
                         String card = board_state.substring(3);
                         board_stack.get(color).push(card);
-                        if (!(card.contains("1")) && (card.contains("0"))) curBoard.setText("X");
+                        if (!(card.contains("1")) && (card.contains("0")))
+                            curBoard.setText("X");
                         else curBoard.setText(card);
-                    } else {
-                        String card = board_stack.get(color).peek();
+                    }
+                    else {
+                        board_stack.get(color).pop();
                         if (board_stack.get(color).isEmpty()) curBoard.setText("");
                         else {
+                            String card = board_stack.get(color).peek();
                             if (!(card.contains("1")) && (card.contains("0")))
                                 curBoard.setText("X");
                             else curBoard.setText(card);
-                            board_stack.get(color).pop();
                         }
                     }
                 }
@@ -376,5 +341,52 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+    public void updateDevList() {
+        List<String> colors = Arrays.asList("R","G","W","B","Y");
+        for(String color: colors) {
+            FirebaseDatabase h_list_base = FirebaseDatabase.getInstance();
+            DatabaseReference hlistDb = h_list_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
+            hlistDb.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        findCurList(dataSnapshot.getKey(),true);
+                        ArrayList<String> myDev_list = new ArrayList<String>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            myDev_list.add(child.getValue().toString());
+                        }
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
+                        curListView.setAdapter(listAdapter);
+                        curSelView.setSelected(false);
+                        curListView.setEnabled(false);
+                        my_state = "SetCardDev";
+                        setBoardEnable(true);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+            FirebaseDatabase g_list_base = FirebaseDatabase.getInstance();
+            DatabaseReference glistDb = g_list_base.getReference().child("RoomList").child(room_name).child("Gest").child("DevCard").child(color);
+            glistDb.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        findCurList(dataSnapshot.getKey(),false);
+                        ArrayList<String> opntDev_list = new ArrayList<String>();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            opntDev_list.add(child.getValue().toString());
+                        }
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
+                        curListView.setAdapter(listAdapter);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
     }
 }
