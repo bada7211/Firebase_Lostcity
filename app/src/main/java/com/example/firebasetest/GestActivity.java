@@ -45,6 +45,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     String my_selCard = "";
     View preSelView;
     View curSelView;
+    int deck_count;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
@@ -88,32 +89,12 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         updateMyDeck();
                         updateBoard();
                         updateDevList();
+                        updateBoardDeck();
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference().child("RoomList");
                         stateDb.child(room_name).child("State").setValue("1ROUND");
                         round.setText("1ROUND");
                     }
-//                    if(game_state.contains("setDev")){
-//                        FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
-//                        final String color = dataSnapshot.getValue().toString().substring(2,3);
-//                        DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host").child("DevCard").child(color);
-//                        devDb.addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                ArrayList<String> opntDev_list = new ArrayList<String>();
-//                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                                    opntDev_list.add(child.getValue().toString());
-//                                }
-//                                Collections.sort(opntDev_list);
-//                                findCurList(color, false);
-//                                listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,R.drawable.r_back);
-//                                curListView.setAdapter(listAdapter);
-//                            }
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            }
-//                        });
-//                    }
                 }
             }
             @Override
@@ -183,6 +164,23 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         if(!(board_b.getText().equals(""))) board_b.setEnabled(set);
         if(!(board_y.getText().equals(""))) board_y.setEnabled(set);
         board_deck.setEnabled(set);
+    }
+
+    public  void updateBoardDeck() {
+        FirebaseDatabase boarddeck_base = FirebaseDatabase.getInstance();
+        DatabaseReference boarddeckDb = boarddeck_base.getReference().child("RoomList").child(room_name).child("Game").child("DeckCount");
+        boarddeckDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    deck_count = Integer.parseInt(dataSnapshot.getValue().toString());
+                    board_deck.setText(""+deck_count+"");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     public void updateMyDeck() {

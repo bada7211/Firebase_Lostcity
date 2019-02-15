@@ -55,6 +55,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     Button curBoard;
     Button preBoard;
 
+    int deck_count;
+
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
     @Override
@@ -85,6 +87,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
 
         setDevClickListener();
         setBoardClickListener();
+        setDeckClickListener();
 
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference().child("RoomList").child(room_name).child("State");
@@ -98,7 +101,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         round.setText("On");
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference("RoomList");
-//                        Toast.makeText(GameActivity.this, "Start", Toast.LENGTH_SHORT).show();;
                         stateDb.child(room_name).child("Game").child("DeckCount").setValue(44);
                         stateDb.child(room_name).child("Game").child("Score").setValue("0 : 0");
                         stateDb.child(room_name).child("Game").child("Round").setValue(1);
@@ -113,6 +115,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         updateMyDeck();
                         updateBoard();
                         updateDevList();
+                        updateBoardDeck();
                         round.setText("Start");
                         stateDb.child(room_name).child("State").setValue("Start");
                     }
@@ -172,9 +175,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         View.OnClickListener board_click = new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //보드에 카드쌓기
+                //보드에 카드쌓기,먹기
                 if(my_state.contains("SetCard")) {
-                    //TODO:: 보드에서 카드먹는거 구현
                     curBoard = (Button) v;
                     String color = findBoardColor(v.getId());
                     String card = board_stack.get(color).peek();
@@ -204,7 +206,31 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     public void setDeckClickListener(){
-        //TODO:: 덱클릭하면 먹는거 구현해야돼
+        View.OnClickListener boarddeck_click = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (my_state.contains("SetCard")) {
+                    //TODO:: 덱클릭하면 먹는거 구현해야돼
+                    FirebaseDatabase mydeck_base = FirebaseDatabase.getInstance();
+                    DatabaseReference mydeckDb = mydeck_base.getReference().child("RoomList").child(room_name).child("Game").child("Deck");
+                    mydeckDb.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String card = dataSnapshot.child("" + deck_count + "").getValue().toString();
+                            FirebaseDatabase getdeck_base = FirebaseDatabase.getInstance();
+                            DatabaseReference getdeckDb = getdeck_base.getReference().child("RoomList").child(room_name);
+                            getdeckDb.child("Game").child("DeckCount").setValue(deck_count - 1);
+                            getdeckDb.child("Host").child("Card").child(card).setValue(card);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+        };
+        board_deck.setOnClickListener(boarddeck_click);
     }
 
     public void setDevClickListener(){
@@ -283,6 +309,23 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         if(!(board_b.getText().equals(""))) board_b.setEnabled(set);
         if(!(board_y.getText().equals(""))) board_y.setEnabled(set);
         board_deck.setEnabled(set);
+    }
+
+    public  void updateBoardDeck() {
+        FirebaseDatabase boarddeck_base = FirebaseDatabase.getInstance();
+        DatabaseReference boarddeckDb = boarddeck_base.getReference().child("RoomList").child(room_name).child("Game").child("DeckCount");
+        boarddeckDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    deck_count = Integer.parseInt(dataSnapshot.getValue().toString());
+                    board_deck.setText(""+deck_count+"");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     public void updateMyDeck() {

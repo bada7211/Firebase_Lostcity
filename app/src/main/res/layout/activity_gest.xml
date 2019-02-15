@@ -224,28 +224,17 @@
             android:text=""
             android:textColor="@color/white" />
 
-        <RelativeLayout
+        <Button
+            android:id="@+id/deckBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/deckBoard"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:background="@drawable/r_back"
-                android:enabled="false"/>
-
-            <TextView
-                android:id="@+id/deck_count"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="30"
-                android:textSize="18sp" />
-        </RelativeLayout>
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="@drawable/r_back"
+            android:enabled="false"
+            android:text=""
+            android:textSize="20sp"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <LinearLayout
