@@ -46,7 +46,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     ListAdapter listAdapter;
     Button board_r,board_g,board_w,board_b,board_y,board_deck;
     Boolean my_tern = false;
-    String my_state = "ready";
+    String my_state = "Ready";
     String my_selCard = "";
     View preSelView;
     View curSelView;
@@ -119,8 +119,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         round.setText("Start");
                         stateDb.child(room_name).child("State").setValue("Start");
                     }
-                    //1라운드 호스트 카드버리기 턴
-                    if(game_state.equals("1ROUND")){
+                    //1라운드 호스트턴
+                    if(game_state.equals("1ROUNDH")){
+                        findCurList("Clear",true);
                         my_state = "SelCard";
                     }
                 }
@@ -177,6 +178,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             public void onClick(View v) {
                 //보드에 카드쌓기,먹기
                 if(my_state.contains("SetCard")) {
+                    setBoardEnable(false);
                     curBoard = (Button) v;
                     String color = findBoardColor(v.getId());
                     String card = board_stack.get(color).peek();
@@ -184,16 +186,21 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
                     boardDb.child("Host").child("Card").child(card).setValue(card);
                     boardDb.child("Board").setValue("Rmv"+card);
-                    curBoard.setEnabled(false);
+
+                    FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                    DatabaseReference stateDb = state_base.getReference().child("RoomList");
+                    stateDb.child(room_name).child("State").setValue("1ROUNDG");
+                    my_state = "Ready";
                 }
                 if(my_state.equals("Selected")) {
+                    curSelView.setSelected(false);
+                    setBoardEnable(true);
+                    curBoard.setEnabled(false);
+                    curListView.setEnabled(false);
                     FirebaseDatabase board_base = FirebaseDatabase.getInstance();
                     DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
                     boardDb.child("Board").setValue("Add"+my_selCard);
                     boardDb.child("Host").child("Card").child(my_selCard).removeValue();
-                    curSelView.setSelected(false);
-                    setBoardEnable(true);
-                    curBoard.setEnabled(false);
                     my_state = "SetCardBoard";
                 }
             }
@@ -210,7 +217,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             @Override
             public void onClick(View v) {
                 if (my_state.contains("SetCard")) {
-                    //TODO:: 덱클릭하면 먹는거 구현해야돼
+                    setBoardEnable(false);
                     FirebaseDatabase mydeck_base = FirebaseDatabase.getInstance();
                     DatabaseReference mydeckDb = mydeck_base.getReference().child("RoomList").child(room_name).child("Game").child("Deck");
                     mydeckDb.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -221,6 +228,10 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                             DatabaseReference getdeckDb = getdeck_base.getReference().child("RoomList").child(room_name);
                             getdeckDb.child("Game").child("DeckCount").setValue(deck_count - 1);
                             getdeckDb.child("Host").child("Card").child(card).setValue(card);
+                            FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                            DatabaseReference stateDb = state_base.getReference().child("RoomList");
+                            stateDb.child(room_name).child("State").setValue("1ROUNDG");
+                            my_state = "Ready";
                         }
 
                         @Override
@@ -239,6 +250,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
                     if(my_state.equals("Selected")) {
+                        curSelView.setSelected(false);
+                        curListView.setEnabled(false);
+                        curBoard.setEnabled(false);
                         FirebaseDatabase dev_base = FirebaseDatabase.getInstance();
                         DatabaseReference devDb = dev_base.getReference().child("RoomList").child(room_name).child("Host");
                         final String color = my_selCard.substring(0,1);
@@ -401,8 +415,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         }
                         listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,R.drawable.r_back);
                         curListView.setAdapter(listAdapter);
-                        curSelView.setSelected(false);
-                        curListView.setEnabled(false);
                         my_state = "SetCardDev";
                         setBoardEnable(true);
                     }
