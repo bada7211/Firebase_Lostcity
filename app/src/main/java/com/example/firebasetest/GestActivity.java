@@ -47,6 +47,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     View preSelView;
     View curSelView;
     int deck_count;
+    int round_count = 0;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
@@ -95,15 +96,28 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         updateBoard();
                         updateDevList();
                         updateBoardDeck();
+                        round_count = 1;
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference().child("RoomList");
                         stateDb.child(room_name).child("State").setValue("1ROUNDH");
                         round.setText("1ROUND");
                     }
                     //1라운드 게스트턴
-                    if(game_state.equals("1ROUNDG")){
+                    if(game_state.contains("ROUNDG")){
                         findCurList("Clear",true);
                         my_state = "SelCard";
+                    }
+                    if(game_state.contains("END")){
+                        FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                        DatabaseReference stateDb = state_base.getReference("RoomList").child(room_name);
+                        if(game_state.contains("3")) {
+                            //TODO:: 게임종료
+                        }
+                        else{
+                            resetGame();
+                            round_count += 1;
+                            round.setText(round_count + "ROUND");
+                        }
                     }
                 }
             }
@@ -169,7 +183,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     boardDb.child("Board").setValue("Rmv"+card);
                     FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                     DatabaseReference stateDb = state_base.getReference().child("RoomList");
-                    stateDb.child(room_name).child("State").setValue("1ROUNDH");
+                    stateDb.child(room_name).child("State").setValue(round_count+"ROUNDH");
                     my_state = "Ready";
                 }
                 if(my_state.equals("Selected")) {
@@ -309,8 +323,8 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     if(my_state.contains("SetCard")) {
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference().child("RoomList");
-                        if(deck_count == 0) stateDb.child(room_name).child("State").setValue("1ROUNDEND");
-                        else stateDb.child(room_name).child("State").setValue("1ROUNDH");
+                        if(deck_count == 0) stateDb.child(room_name).child("State").setValue(round_count+"ROUNDEND");
+                        else stateDb.child(room_name).child("State").setValue(round_count+"ROUNDH");
                         my_state = "Ready";
                     }
                 }
@@ -425,5 +439,31 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                 }
             });
         }
+    }
+    public void resetGame() {
+        //보드초기화
+        board_stack.clear();
+        board_stack.put("R",new Stack<String>());
+        board_stack.put("G",new Stack<String>());
+        board_stack.put("W",new Stack<String>());
+        board_stack.put("B",new Stack<String>());
+        board_stack.put("Y",new Stack<String>());
+        Button[] boards = {board_r,board_g,board_w,board_b,board_y};
+        for(Button board : boards) {
+            board.setText("");
+        }
+        //리스트초기화
+        ListView[] lists = {myList_r,myList_g,myList_w,myList_b,myList_y,
+                opntList_r,opntList_g,opntList_w,opntList_b,opntList_y};
+        for(ListView list : lists) {
+            ArrayList<String> myDev_list = new ArrayList<String>();
+            myDev_list.clear();
+            listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list);
+            curListView.setAdapter(listAdapter);
+        }
+        //내 덱 초기화
+        myDeck_list.clear();
+        gridAdapter = new GridAdapter(GestActivity.this,R.layout.my_deck,myDeck_list,GestActivity.this);
+        gridView.setAdapter(gridAdapter);
     }
 }
