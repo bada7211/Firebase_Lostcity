@@ -60,10 +60,10 @@ public class ListAdapter extends ArrayAdapter {
     }
 
     public int getBackResource(String card) {
-        if(card.contains("R")) return R.drawable.r_back;
-        else if(card.contains("G")) return R.drawable.g_back;
-        else if(card.contains("W")) return R.drawable.w_back;
-        else if(card.contains("B")) return R.drawable.b_back;
-        else return R.drawable.y_back;
+        if(card.contains("R")) return R.drawable.reddevcard;
+        else if(card.contains("G")) return R.drawable.greendevcard;
+        else if(card.contains("W")) return R.drawable.whitedevcard;
+        else if(card.contains("B")) return R.drawable.bluedevcard;
+        else return R.drawable.yellowdevcard;
     }
 }

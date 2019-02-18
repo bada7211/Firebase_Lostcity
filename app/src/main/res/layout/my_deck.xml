@@ -7,8 +7,9 @@
         android:id="@+id/myDeckCard"
         android:layout_width="35dp"
         android:layout_height="60dp"
-        android:background="@drawable/r_back"
+        android:background="@drawable/whitedevcard"
         android:text="2"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 </RelativeLayout>

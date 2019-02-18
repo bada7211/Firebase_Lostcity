@@ -50,6 +50,8 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     int round_count = 0;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
+    HashMap<String, Integer> mypoints = new HashMap<String, Integer>();
+    HashMap<String, Integer> opntpoints = new HashMap<String, Integer>();
 
     ArrayList<String> myDeck_list = new ArrayList<String>();
     @Override
@@ -302,6 +304,23 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         else  return "Y";
     }
 
+    public TextView findCurScoreView(String color,Boolean flag) {
+        if(flag){
+            if(color.equals("R")) return (TextView)findViewById(R.id.rScore_me);
+            else if(color.equals("G")) return (TextView)findViewById(R.id.gScore_me);
+            else if(color.equals("W")) return (TextView)findViewById(R.id.wScore_me);
+            else if(color.equals("B")) return (TextView)findViewById(R.id.bScore_me);
+            else return (TextView)findViewById(R.id.yScore_me);
+        }
+        else{
+            if(color.equals("R")) return (TextView)findViewById(R.id.rScore_opnt);
+            else if(color.equals("G")) return (TextView)findViewById(R.id.gScore_opnt);
+            else if(color.equals("W")) return (TextView)findViewById(R.id.wScore_opnt);
+            else if(color.equals("B")) return (TextView)findViewById(R.id.bScore_opnt);
+            else return (TextView)findViewById(R.id.yScore_opnt);
+        }
+    }
+
     public void setBoardEnable(Boolean set) {
         if(!(board_r.getText().equals(""))) board_r.setEnabled(set);
         if(!(board_g.getText().equals(""))) board_g.setEnabled(set);
@@ -394,8 +413,13 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         });
     }
     public void updateDevList() {
+        mypoints.put("T",0);
+        opntpoints.put("T",0);
         List<String> colors = Arrays.asList("R","G","W","B","Y");
         for(String color: colors) {
+            mypoints.put(color,0);
+            opntpoints.put(color,0);
+            final String s_color = color;
             FirebaseDatabase g_list_base = FirebaseDatabase.getInstance();
             DatabaseReference glistDb = g_list_base.getReference().child("RoomList").child(room_name).child("Gest").child("DevCard").child(color);
             glistDb.addValueEventListener(new ValueEventListener() {
@@ -404,9 +428,18 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     if (dataSnapshot.getValue() != null) {
                         findCurList(dataSnapshot.getKey(),true);
                         ArrayList<String> myDev_list = new ArrayList<String>();
+                        int score = 0;
+                        int mult = 1;
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            myDev_list.add(child.getValue().toString());
+                            String card = child.getValue().toString();
+                            String num = card.substring(1);
+                            if(!(num.contains("1"))&&(num.contains("0"))) mult += 1;
+                            else score += Integer.parseInt(num);
+                            myDev_list.add(card);
                         }
+                        score = (score - 20) * mult;
+                        mypoints.put(s_color,score);
+                        findCurScoreView(s_color,true).setText(String.valueOf(score));
                         listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list);
                         curListView.setAdapter(listAdapter);
                         curSelView.setSelected(false);
@@ -427,9 +460,18 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     if (dataSnapshot.getValue() != null) {
                         findCurList(dataSnapshot.getKey(),false);
                         ArrayList<String> opntDev_list = new ArrayList<String>();
+                        int score = 0;
+                        int mult = 1;
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            opntDev_list.add(child.getValue().toString());
+                            String card = child.getValue().toString();
+                            String num = card.substring(1);
+                            if(!(num.contains("1"))&&(num.contains("0"))) mult += 1;
+                            else score += Integer.parseInt(num);
+                            opntDev_list.add(card);
                         }
+                        score = (score - 20) * mult;
+                        opntpoints.put(s_color,score);
+                        findCurScoreView(s_color,false).setText(String.valueOf(score));
                         listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list);
                         curListView.setAdapter(listAdapter);
                     }
@@ -441,13 +483,20 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         }
     }
     public void resetGame() {
-        //보드초기화
         board_stack.clear();
-        board_stack.put("R",new Stack<String>());
-        board_stack.put("G",new Stack<String>());
-        board_stack.put("W",new Stack<String>());
-        board_stack.put("B",new Stack<String>());
-        board_stack.put("Y",new Stack<String>());
+        mypoints.clear();
+        opntpoints.clear();
+        List<String> colors = Arrays.asList("R","G","W","B","Y");
+        for(String color: colors) {
+            board_stack.put(color,new Stack<String>());
+            mypoints.put(color,0);
+            opntpoints.put(color,0);
+            findCurScoreView(color,true).setText("");
+            findCurScoreView(color,false).setText("");
+        }
+        mypoints.put("T",0);
+        opntpoints.put("T",0);
+        //보드초기화
         Button[] boards = {board_r,board_g,board_w,board_b,board_y};
         for(Button board : boards) {
             board.setText("");
@@ -459,7 +508,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
             ArrayList<String> myDev_list = new ArrayList<String>();
             myDev_list.clear();
             listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list);
-            curListView.setAdapter(listAdapter);
+            list.setAdapter(listAdapter);
         }
         //내 덱 초기화
         myDeck_list.clear();
