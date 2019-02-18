@@ -186,7 +186,6 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     DatabaseReference boardDb = board_base.getReference().child("RoomList").child(room_name);
                     boardDb.child("Host").child("Card").child(card).setValue(card);
                     boardDb.child("Board").setValue("Rmv"+card);
-
                     FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                     DatabaseReference stateDb = state_base.getReference().child("RoomList");
                     stateDb.child(room_name).child("State").setValue("1ROUNDG");
@@ -226,12 +225,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                             String card = dataSnapshot.child("" + deck_count + "").getValue().toString();
                             FirebaseDatabase getdeck_base = FirebaseDatabase.getInstance();
                             DatabaseReference getdeckDb = getdeck_base.getReference().child("RoomList").child(room_name);
-                            getdeckDb.child("Game").child("DeckCount").setValue(deck_count - 1);
                             getdeckDb.child("Host").child("Card").child(card).setValue(card);
-                            FirebaseDatabase state_base = FirebaseDatabase.getInstance();
-                            DatabaseReference stateDb = state_base.getReference().child("RoomList");
-                            stateDb.child(room_name).child("State").setValue("1ROUNDG");
-                            my_state = "Ready";
+                            getdeckDb.child("Game").child("DeckCount").setValue(deck_count - 1);
                         }
 
                         @Override
@@ -334,6 +329,13 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                 if (dataSnapshot.getValue() != null) {
                     deck_count = Integer.parseInt(dataSnapshot.getValue().toString());
                     board_deck.setText(""+deck_count+"");
+                    if(my_state.contains("SetCard")) {
+                        FirebaseDatabase state_base = FirebaseDatabase.getInstance();
+                        DatabaseReference stateDb = state_base.getReference().child("RoomList");
+                        if(deck_count == 0) stateDb.child(room_name).child("State").setValue("1ROUNDEND");
+                        else stateDb.child(room_name).child("State").setValue("1ROUNDG");
+                        my_state = "Ready";
+                    }
                 }
             }
             @Override
