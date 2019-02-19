@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,15 +17,17 @@ public class ListAdapter extends ArrayAdapter {
 
     // 생성자로부터 전달된 resource id 값을 저장.
     int resourceId ;
+    int height;
 
     private ArrayList<String> numbers = new ArrayList<String>();
 
     Button cardButton;
     String cardName;
 
-    ListAdapter(Context context, int resource, ArrayList<String> list) {
+    ListAdapter(Context context, int resource, ArrayList<String> list, int height) {
         super(context, resource, list);
         numbers = list;
+        height = this.height;
         // resource id 값 복사. (super로 전달된 resource를 참조할 방법이 없음.)
         this.resourceId = resource ;
     }
@@ -45,6 +48,7 @@ public class ListAdapter extends ArrayAdapter {
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         cardButton = (Button) convertView.findViewById(R.id.myDevCard);
+        cardButton.setLayoutParams(new RelativeLayout.LayoutParams(height,height));
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         cardName = (String) numbers.get(pos);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     android:weightSum="10"
     tools:context=".MainActivity">
@@ -18,7 +18,8 @@
         android:paddingLeft="10dp"
         android:text="Room List"
         android:textColor="@android:color/holo_purple"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        app:fontFamily="@font/typo_ssangmundongb" />
 
     <ListView
         android:id="@+id/roomList"
@@ -33,6 +34,6 @@
         android:layout_weight="1"
         android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
         android:onClick="createRoom_Start"
-        android:text="방만들기"
+        android:text="Create Room"
         android:textColor="@android:color/holo_purple" />
 </LinearLayout>

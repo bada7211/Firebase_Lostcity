@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/zig"
+    android:background="@drawable/pattern443"
     android:orientation="vertical"
     android:weightSum="21.5"
     tools:context=".GestActivity">
@@ -22,7 +22,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:text="TextView"
-            android:textSize="14sp" />
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/user"
@@ -31,6 +33,7 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:text="Gest"
+            android:textColor="@color/white"
             android:textSize="12sp" />
 
         <TextView
@@ -40,7 +43,9 @@
             android:layout_marginRight="15dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:textSize="14sp" />
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
     </LinearLayout>
 
     <LinearLayout
@@ -53,31 +58,46 @@
             android:id="@+id/rCard_opnt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true" />
 
         <ListView
             android:id="@+id/gCard_opnt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true" />
 
         <ListView
             android:id="@+id/wCard_opnt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true" />
 
         <ListView
             android:id="@+id/bCard_opnt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true" />
 
         <ListView
             android:id="@+id/yCard_opnt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true" />
 
         <View
             android:layout_width="match_parent"
@@ -104,7 +124,8 @@
             android:gravity="center"
             android:text="0"
             android:textColor="@color/white2"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/gScore_opnt"
@@ -116,7 +137,8 @@
             android:gravity="center"
             android:text="0"
             android:textColor="@color/white2"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/wScore_opnt"
@@ -126,9 +148,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/bScore_opnt"
@@ -138,9 +161,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/yScore_opnt"
@@ -152,7 +176,8 @@
             android:gravity="center"
             android:text="0"
             android:textColor="@color/white2"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/tScore_opnt"
@@ -162,9 +187,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="12sp" />
+            android:textColor="@color/white2"
+            android:textSize="12sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
     </LinearLayout>
 
@@ -183,7 +209,8 @@
             android:background="@drawable/r_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2" />
+            android:textColor="@color/black2"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <Button
             android:id="@+id/gBoard"
@@ -194,7 +221,8 @@
             android:background="@drawable/g_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2" />
+            android:textColor="@color/black2"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <Button
             android:id="@+id/wBoard"
@@ -205,7 +233,8 @@
             android:background="@drawable/w_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2" />
+            android:textColor="@color/black2"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <Button
             android:id="@+id/bBoard"
@@ -216,7 +245,8 @@
             android:background="@drawable/b_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2" />
+            android:textColor="@color/black2"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <Button
             android:id="@+id/yBoard"
@@ -227,7 +257,8 @@
             android:background="@drawable/y_back"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2" />
+            android:textColor="@color/black2"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <Button
             android:id="@+id/deckBoard"
@@ -239,7 +270,8 @@
             android:enabled="false"
             android:text=""
             android:textColor="@color/white2"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
     </LinearLayout>
 
     <LinearLayout
@@ -256,10 +288,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:textColor="@color/white2"
             android:gravity="center"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/gScore_me"
@@ -269,9 +302,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/wScore_me"
@@ -281,9 +315,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/bScore_me"
@@ -293,9 +328,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/yScore_me"
@@ -304,10 +340,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:textColor="@color/white2"
             android:gravity="center"
             android:text="0"
-            android:textSize="10sp" />
+            android:textColor="@color/white2"
+            android:textSize="10sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
         <TextView
             android:id="@+id/tScore_me"
@@ -317,9 +354,10 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white2"
             android:text="0"
-            android:textSize="12sp" />
+            android:textColor="@color/white2"
+            android:textSize="12sp"
+            app:fontFamily="@font/typo_ssangmundongb" />
 
     </LinearLayout>
 
@@ -333,31 +371,41 @@
             android:id="@+id/rCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
 
         <ListView
             android:id="@+id/gCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
 
         <ListView
             android:id="@+id/wCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
 
         <ListView
             android:id="@+id/bCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
 
         <ListView
             android:id="@+id/yCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
 
         <View
             android:layout_width="match_parent"

@@ -10,14 +10,15 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
-            android:text="Notice"
-            android:textSize="20sp"
-            android:textColor="#fff"
-            android:gravity="center"
-            android:background="#9C27B0"
             android:layout_width="match_parent"
-            android:layout_height="53dp" />
+            android:layout_height="53dp"
+            android:background="#9C27B0"
+            android:gravity="center"
+            android:text="Create"
+            android:textColor="#fff"
+            android:textSize="20sp" />
     </LinearLayout>
     <!-- //end 타이틀바 -->
 

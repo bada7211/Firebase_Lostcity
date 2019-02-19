@@ -1,9 +1,13 @@
 package com.example.firebasetest;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,6 +36,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     FirebaseDatabase database;
     DatabaseReference roomDb;
     TextView round;
+    TextView total_score;
     GridView gridView;
     GridAdapter gridAdapter;
     ListView myList_r,myList_g,myList_w,myList_b,myList_y;
@@ -50,6 +55,10 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     int round_count = 0;
     int my_score = 0;
     int opnt_score = 0;
+    int my_tscore = 0;
+    int opnt_tscore = 0;
+
+    int height;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
@@ -78,10 +87,16 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         board_b = (Button) findViewById(R.id.bBoard);
         board_y = (Button) findViewById(R.id.yBoard);
         board_deck = (Button) findViewById(R.id.deckBoard);
+        total_score = (TextView) findViewById(R.id.total_score);
 
         setDevClickListener();
         setBoardClickListener();
         setDeckClickListener();
+
+        height = getScreenSize(GestActivity.this).y;
+        height = (int)(height / 3.3);
+        height = (int)(height / 12);
+        Log.d("sc_size", "[1]"+ height);
 
         round.setText("On");
         database = FirebaseDatabase.getInstance();
@@ -103,6 +118,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         DatabaseReference stateDb = state_base.getReference().child("RoomList");
                         stateDb.child(room_name).child("State").setValue("1ROUNDH");
                         round.setText("1ROUND");
+                        total_score.setText(my_tscore +" : "+opnt_tscore);
                     }
                     //1라운드 게스트턴
                     if(game_state.contains("ROUNDG")){
@@ -116,9 +132,12 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                             //TODO:: 게임종료
                         }
                         else{
+                            my_tscore += my_score;
+                            opnt_tscore += opnt_score;
                             resetGame();
                             round_count += 1;
                             round.setText(round_count + "ROUND");
+                            total_score.setText(my_tscore +" : "+opnt_tscore);
                         }
                     }
                 }
@@ -450,7 +469,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,true).getText().toString());
                         findCurScoreView(s_color,true).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,true);
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list,height);
                         curListView.setAdapter(listAdapter);
                         curSelView.setSelected(false);
                         curListView.setEnabled(false);
@@ -483,7 +502,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,false).getText().toString());
                         findCurScoreView(s_color,false).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,false);
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,height);
                         curListView.setAdapter(listAdapter);
                     }
                 }
@@ -519,7 +538,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         for(ListView list : lists) {
             ArrayList<String> myDev_list = new ArrayList<String>();
             myDev_list.clear();
-            listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list);
+            listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list,height);
             list.setAdapter(listAdapter);
         }
         //내 덱 초기화
@@ -527,4 +546,12 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         gridAdapter = new GridAdapter(GestActivity.this,R.layout.my_deck,myDeck_list,GestActivity.this);
         gridView.setAdapter(gridAdapter);
     }
+
+    public Point getScreenSize(Activity activity) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return  size;
+    }
+
 }
