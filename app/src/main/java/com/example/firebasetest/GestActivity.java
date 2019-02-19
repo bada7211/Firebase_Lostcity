@@ -48,10 +48,10 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     View curSelView;
     int deck_count;
     int round_count = 0;
+    int my_score = 0;
+    int opnt_score = 0;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
-    HashMap<String, Integer> mypoints = new HashMap<String, Integer>();
-    HashMap<String, Integer> opntpoints = new HashMap<String, Integer>();
 
     ArrayList<String> myDeck_list = new ArrayList<String>();
     @Override
@@ -321,6 +321,19 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         }
     }
 
+    public void setTotalScore(int score, int pre_score, Boolean flag) {
+        if(flag) {
+            my_score += (score-pre_score);
+            TextView total = (TextView) findViewById(R.id.tScore_me);
+            total.setText(String.valueOf(my_score));
+        }
+        else {
+            opnt_score += (score-pre_score);
+            TextView total = (TextView) findViewById(R.id.tScore_opnt);
+            total.setText(String.valueOf(opnt_score));
+        }
+    }
+
     public void setBoardEnable(Boolean set) {
         if(!(board_r.getText().equals(""))) board_r.setEnabled(set);
         if(!(board_g.getText().equals(""))) board_g.setEnabled(set);
@@ -413,12 +426,8 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         });
     }
     public void updateDevList() {
-        mypoints.put("T",0);
-        opntpoints.put("T",0);
         List<String> colors = Arrays.asList("R","G","W","B","Y");
         for(String color: colors) {
-            mypoints.put(color,0);
-            opntpoints.put(color,0);
             final String s_color = color;
             FirebaseDatabase g_list_base = FirebaseDatabase.getInstance();
             DatabaseReference glistDb = g_list_base.getReference().child("RoomList").child(room_name).child("Gest").child("DevCard").child(color);
@@ -438,8 +447,9 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                             myDev_list.add(card);
                         }
                         score = (score - 20) * mult;
-                        mypoints.put(s_color,score);
+                        int pre_score = Integer.parseInt(findCurScoreView(s_color,true).getText().toString());
                         findCurScoreView(s_color,true).setText(String.valueOf(score));
+                        setTotalScore(score,pre_score,true);
                         listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list);
                         curListView.setAdapter(listAdapter);
                         curSelView.setSelected(false);
@@ -470,8 +480,9 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                             opntDev_list.add(card);
                         }
                         score = (score - 20) * mult;
-                        opntpoints.put(s_color,score);
+                        int pre_score = Integer.parseInt(findCurScoreView(s_color,false).getText().toString());
                         findCurScoreView(s_color,false).setText(String.valueOf(score));
+                        setTotalScore(score,pre_score,false);
                         listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list);
                         curListView.setAdapter(listAdapter);
                     }
@@ -484,18 +495,19 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     }
     public void resetGame() {
         board_stack.clear();
-        mypoints.clear();
-        opntpoints.clear();
+        opnt_score = 0;
+        my_score = 0;
+        TextView total = (TextView) findViewById(R.id.tScore_me);
+        total.setText(String.valueOf(my_score));
+        total = (TextView) findViewById(R.id.tScore_opnt);
+        total.setText(String.valueOf(opnt_score));
         List<String> colors = Arrays.asList("R","G","W","B","Y");
         for(String color: colors) {
             board_stack.put(color,new Stack<String>());
-            mypoints.put(color,0);
-            opntpoints.put(color,0);
-            findCurScoreView(color,true).setText("");
-            findCurScoreView(color,false).setText("");
+            findCurScoreView(color,true).setText("0");
+            findCurScoreView(color,false).setText("0");
         }
-        mypoints.put("T",0);
-        opntpoints.put("T",0);
+
         //보드초기화
         Button[] boards = {board_r,board_g,board_w,board_b,board_y};
         for(Button board : boards) {
