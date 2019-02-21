@@ -17,7 +17,7 @@ public class ListAdapter extends ArrayAdapter {
 
     // 생성자로부터 전달된 resource id 값을 저장.
     int resourceId ;
-    int height;
+    int layout_height;
 
     private ArrayList<String> numbers = new ArrayList<String>();
 
@@ -27,7 +27,7 @@ public class ListAdapter extends ArrayAdapter {
     ListAdapter(Context context, int resource, ArrayList<String> list, int height) {
         super(context, resource, list);
         numbers = list;
-        height = this.height;
+        layout_height = height;
         // resource id 값 복사. (super로 전달된 resource를 참조할 방법이 없음.)
         this.resourceId = resource ;
     }
@@ -46,16 +46,28 @@ public class ListAdapter extends ArrayAdapter {
             convertView = inflater.inflate(this.resourceId/*R.layout.listview_btn_item*/, parent, false);
         }
 
+        ViewGroup.LayoutParams params = convertView.getLayoutParams();
+        params.height = layout_height;
+        convertView.setLayoutParams(params);
+
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         cardButton = (Button) convertView.findViewById(R.id.myDevCard);
-        cardButton.setLayoutParams(new RelativeLayout.LayoutParams(height,height));
+        Typeface star = Typeface.createFromAsset(context.getAssets(), "seeis.ttf");
+        Typeface normal = Typeface.createFromAsset(context.getAssets(), "classic.ttf");
+//        cardButton.setLayoutParams(new RelativeLayout.LayoutParams(height,height));
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         cardName = (String) numbers.get(pos);
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
-        if(!(number.contains("1")) && (number.contains("0"))) cardButton.setText("X");
-        else cardButton.setText(number);
+        if(!(number.contains("1")) && (number.contains("0")))  {
+            cardButton.setTypeface(star);
+            cardButton.setText("A");
+        }
+        else {
+            cardButton.setTypeface(normal);
+            cardButton.setText(number);
+        }
         cardButton.setBackgroundResource(getBackResource(number));
         cardButton.setTag(pos);
 

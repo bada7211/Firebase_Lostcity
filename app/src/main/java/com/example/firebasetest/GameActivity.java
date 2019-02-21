@@ -65,6 +65,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     int my_tscore = 0;
     int opnt_tscore = 0;
     int height;
+    int list_height;
+    int grid_height;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
 
@@ -100,9 +102,9 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         setDeckClickListener();
 
         height = getScreenSize(GameActivity.this).y;
-        height = (int)(height / 3.3);
-        height = (int)(height / 12);
-        Log.d("sc_size", "[1]"+ height);
+        list_height = (int)(height / 4.3);
+        list_height = (int)(list_height / 12);
+        grid_height = (int)(height / 5.6);
 
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference().child("RoomList").child(room_name).child("State");
@@ -132,7 +134,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         updateDevList();
                         updateBoardDeck();
                         round_count = 1;
-                        round.setText("Start");
+                        round.setText("1ROUND");
                         total_score.setText(my_tscore +" : "+opnt_tscore);
                         stateDb.child(room_name).child("State").setValue("Start");
                     }
@@ -442,7 +444,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     myDeck_list.add(child.getValue().toString());
                 }
-                gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
+                gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this, grid_height);
                 gridView.setAdapter(gridAdapter);
             }
             @Override
@@ -511,7 +513,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,true).getText().toString());
                         findCurScoreView(s_color,true).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,true);
-                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,height);
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,list_height);
                         curListView.setAdapter(listAdapter);
                         my_state = "SetCardDev";
                         setBoardEnable(true);
@@ -542,7 +544,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,false).getText().toString());
                         findCurScoreView(s_color,false).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,false);
-                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list,height);
+                        listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list,list_height);
                         curListView.setAdapter(listAdapter);
                     }
                 }
@@ -579,12 +581,12 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         for(ListView list : lists) {
             ArrayList<String> myDev_list = new ArrayList<String>();
             myDev_list.clear();
-            listAdapter = new ListAdapter(GameActivity.this, R.layout.card_item, myDev_list, height);
+            listAdapter = new ListAdapter(GameActivity.this, R.layout.card_item, myDev_list, list_height);
             list.setAdapter(listAdapter);
         }
         //내 덱 초기화
         myDeck_list.clear();
-        gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this);
+        gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this, grid_height);
         gridView.setAdapter(gridAdapter);
     }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pattern443"
+    android:background="@drawable/game_back"
     android:orientation="vertical"
     android:weightSum="21.5"
     tools:context=".GestActivity">
@@ -24,7 +24,7 @@
             android:text="TextView"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:fontFamily="@font/docktrin" />
+            app:fontFamily="@font/war" />
 
         <TextView
             android:id="@+id/total_score"
@@ -35,7 +35,7 @@
             android:gravity="right"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:fontFamily="@font/typo_ssangmundongb" />
+            app:fontFamily="@font/war" />
     </LinearLayout>
 
     <LinearLayout

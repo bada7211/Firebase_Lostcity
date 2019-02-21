@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black2"
+    android:background="@drawable/game_back"
     android:orientation="vertical"
     android:weightSum="21.5"
     tools:context=".GameActivity">
@@ -24,7 +24,7 @@
             android:text="1ROUND"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:fontFamily="@font/docktrin" />
+            app:fontFamily="@font/war" />
 
         <TextView
             android:id="@+id/total_score"
@@ -35,7 +35,7 @@
             android:gravity="right"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:fontFamily="@font/typo_ssangmundongb" />
+            app:fontFamily="@font/war" />
     </LinearLayout>
 
     <LinearLayout
@@ -367,41 +367,31 @@
             android:id="@+id/rCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:layout_weight="1" />
 
         <ListView
             android:id="@+id/gCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:layout_weight="1" />
 
         <ListView
             android:id="@+id/wCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:layout_weight="1" />
 
         <ListView
             android:id="@+id/bCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:layout_weight="1" />
 
         <ListView
             android:id="@+id/yCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
+            android:layout_weight="1" />
 
         <View
             android:layout_width="match_parent"

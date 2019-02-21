@@ -3,20 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="2dp"
+    android:layout_height="40px"
     android:clickable="false">
 
     <Button
         android:id="@+id/myDevCard"
         android:layout_width="match_parent"
-        android:layout_height="200px"
+        android:layout_height="match_parent"
         android:layout_marginStart="2dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="2dp"
         android:layout_marginEnd="2dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="2dp"
         android:background="@drawable/r_back"
         android:clickable="false"
         android:text="1"
