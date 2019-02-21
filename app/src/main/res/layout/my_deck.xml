@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/whitedevcard"
+        android:gravity="bottom|right"
+        android:padding="40px"
         android:text="2"
         android:textColor="@color/black"
         android:textSize="14sp"
