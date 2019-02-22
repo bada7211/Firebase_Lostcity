@@ -41,7 +41,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_weight="6.25"
         android:orientation="horizontal">
 
         <ListView
@@ -194,13 +194,12 @@
             android:id="@+id/rBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:padding="40px"
-            android:background="@drawable/redcard2"
+            android:background="@drawable/redcard"
             android:enabled="false"
+            android:gravity="bottom|right"
             android:text=""
-            android:textColor="@color/black2"
+            android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
 
@@ -208,12 +207,12 @@
             android:id="@+id/gBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/g_back"
+            android:background="@drawable/greencard"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2"
+            android:gravity="bottom|right"
+            android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
 
@@ -221,12 +220,12 @@
             android:id="@+id/wBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/w_back"
+            android:background="@drawable/whitecard"
             android:enabled="false"
+            android:gravity="bottom|right"
             android:text=""
-            android:textColor="@color/black2"
+            android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
 
@@ -234,12 +233,12 @@
             android:id="@+id/bBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/b_back"
+            android:background="@drawable/bluecard"
             android:enabled="false"
+            android:gravity="bottom|right"
             android:text=""
-            android:textColor="@color/black2"
+            android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
 
@@ -247,12 +246,12 @@
             android:id="@+id/yBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/y_back"
+            android:background="@drawable/yellowcard"
             android:enabled="false"
             android:text=""
-            android:textColor="@color/black2"
+            android:gravity="bottom|right"
+            android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
 
@@ -260,7 +259,6 @@
             android:id="@+id/deckBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@drawable/d_back"
             android:enabled="false"
@@ -361,7 +359,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_weight="6.25"
         android:orientation="horizontal">
 
         <ListView
@@ -403,7 +401,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="3.5"
         android:orientation="vertical"
         android:weightSum="2">
 

@@ -12,8 +12,8 @@
         android:gravity="bottom|right"
         android:padding="40px"
         android:text="2"
-        android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textColor="@color/white2"
+        android:textSize="60px"
         android:textStyle="bold"
-        app:fontFamily="@font/typo_ssangmundongb" />
+        app:fontFamily="@font/blackjack" />
 </RelativeLayout>

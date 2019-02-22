@@ -3,6 +3,7 @@ package com.example.firebasetest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,8 +63,14 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     int height;
     int list_height;
     int grid_height;
+    int num_padding;
+    int star_padding;
+    int font_size;
+    Typeface star;
+    Typeface normal;
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
+    HashMap<String, String> dev_last_card = new HashMap<String, String>();
 
     ArrayList<String> myDeck_list = new ArrayList<String>();
     @Override
@@ -90,6 +98,8 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         board_y = (Button) findViewById(R.id.yBoard);
         board_deck = (Button) findViewById(R.id.deckBoard);
         total_score = (TextView) findViewById(R.id.total_score);
+        star = Typeface.createFromAsset(this.getAssets(), "seeis.ttf");
+        normal = Typeface.createFromAsset(this.getAssets(), "blackjack.ttf");
 
         setDevClickListener();
         setBoardClickListener();
@@ -98,7 +108,10 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         height = getScreenSize(GestActivity.this).y;
         list_height = (int)(height / 4.3);
         list_height = (int)(list_height / 12);
-        grid_height = (int)(height / 5.6);
+        grid_height = (int)(height / 7);
+        num_padding = (int)(height/65);
+        star_padding = (int)(height/45);
+        font_size = (int)(height/100);
 
         round.setText("On");
         database = FirebaseDatabase.getInstance();
@@ -131,7 +144,14 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference("RoomList").child(room_name);
                         if(game_state.contains("3")) {
-                            //TODO:: 게임종료
+                            my_tscore += my_score;
+                            opnt_tscore += opnt_score;
+                            total_score.setText(my_tscore +" : "+opnt_tscore);
+                            String msg;
+                            if(my_tscore < opnt_tscore) msg = "[Lose] "+ my_tscore + " : " + opnt_tscore;
+                            else if(my_tscore > opnt_tscore) msg = "[Win] "+ my_tscore + " : " + opnt_tscore;
+                            else msg = "[Draw] "+ my_tscore + " : " + opnt_tscore;
+                            Toast.makeText(GestActivity.this,msg,Toast.LENGTH_LONG).show();
                         }
                         else{
                             my_tscore += my_score;
@@ -185,7 +205,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
             if(preBoard!=null) preBoard.setEnabled(false);
             preListView = curListView;
             preBoard = curBoard;
-            curListView.setEnabled(true);
+            if(findDecOrder(my_selCard)) curListView.setEnabled(true); //TODO:: 배경ㄱ
             curBoard.setEnabled(true);
         }
     }
@@ -425,19 +445,36 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                     if (board_state.contains("Add")) {
                         String card = board_state.substring(3);
                         board_stack.get(color).push(card);
-                        if (!(card.contains("1")) && (card.contains("0")))
-                            curBoard.setText("X");
-                        else curBoard.setText(card);
+                        if (!(card.contains("1")) && (card.contains("0"))) {
+                            curBoard.setPadding(0,0,star_padding,star_padding);
+                            curBoard.setTypeface(star);
+                            curBoard.setText("A");
+                        }
+                        else {
+                            curBoard.setPadding(0,0,num_padding,num_padding);
+                            curBoard.setTypeface(normal);
+                            curBoard.setText(card.substring(1));
+                        }
+                        curBoard.setTextSize(font_size);
                     }
                     else {
                         board_stack.get(color).pop();
                         if (board_stack.get(color).isEmpty()) curBoard.setText("");
                         else {
                             String card = board_stack.get(color).peek();
-                            if (!(card.contains("1")) && (card.contains("0")))
-                                curBoard.setText("X");
-                            else curBoard.setText(card);
+                            if (!(card.contains("1")) && (card.contains("0"))) {
+                                curBoard.setPadding(0,0,star_padding,star_padding);
+                                curBoard.setTypeface(star);
+                                curBoard.setText("A");
+                            }
+                            else {
+                                curBoard.setPadding(0,0,num_padding,num_padding);
+                                curBoard.setTypeface(normal);
+                                curBoard.setText(card.substring(1));
+                            }
+                            curBoard.setTextSize(font_size);
                         }
+
                     }
                 }
             }
@@ -450,6 +487,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         List<String> colors = Arrays.asList("R","G","W","B","Y");
         for(String color: colors) {
             final String s_color = color;
+            dev_last_card.put(color,"0000");
             FirebaseDatabase g_list_base = FirebaseDatabase.getInstance();
             DatabaseReference glistDb = g_list_base.getReference().child("RoomList").child(room_name).child("Gest").child("DevCard").child(color);
             glistDb.addValueEventListener(new ValueEventListener() {
@@ -460,13 +498,17 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         ArrayList<String> myDev_list = new ArrayList<String>();
                         int score = 0;
                         int mult = 1;
+                        String ten_card = "N";
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             String card = child.getValue().toString();
                             String num = card.substring(1);
                             if(!(num.contains("1"))&&(num.contains("0"))) mult += 1;
                             else score += Integer.parseInt(num);
-                            myDev_list.add(card);
+                            if(num.equals("10")) ten_card = card;
+                            else myDev_list.add(card);
                         }
+                        if(ten_card.contains("10")) myDev_list.add(ten_card);
+                        dev_last_card.put(s_color,myDev_list.get(myDev_list.size()-1));
                         score = (score - 20) * mult;
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,true).getText().toString());
                         findCurScoreView(s_color,true).setText(String.valueOf(score));
@@ -493,13 +535,16 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         ArrayList<String> opntDev_list = new ArrayList<String>();
                         int score = 0;
                         int mult = 1;
+                        String ten_card = "N";
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             String card = child.getValue().toString();
                             String num = card.substring(1);
                             if(!(num.contains("1"))&&(num.contains("0"))) mult += 1;
                             else score += Integer.parseInt(num);
-                            opntDev_list.add(card);
+                            if(num.equals("10")) ten_card = card;
+                            else opntDev_list.add(card);
                         }
+                        if(ten_card.contains("10")) opntDev_list.add(ten_card);
                         score = (score - 20) * mult;
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,false).getText().toString());
                         findCurScoreView(s_color,false).setText(String.valueOf(score));
@@ -554,6 +599,21 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         Point size = new Point();
         display.getSize(size);
         return  size;
+    }
+
+    public Boolean findDecOrder(String card) {
+        String last_card = dev_last_card.get(card.substring(0,1));
+        if(!(card.contains("1"))&&(card.contains("0"))){
+            if(!(last_card.contains("1"))&&(last_card.contains("0"))) return true;
+            else return false;
+        }
+        else {
+            if(!(last_card.contains("1"))&&(last_card.contains("0"))) return true;
+            else{
+                if(Integer.parseInt(card.substring(1))>Integer.parseInt(last_card.substring(1))) return true;
+                else return false;
+            }
+        }
     }
 
 }

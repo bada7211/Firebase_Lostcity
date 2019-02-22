@@ -49,11 +49,14 @@ public class ListAdapter extends ArrayAdapter {
         ViewGroup.LayoutParams params = convertView.getLayoutParams();
         params.height = layout_height;
         convertView.setLayoutParams(params);
+        int num_padding = (int)(layout_height/10);
+        int star_padding = (int)(layout_height/7);
+        int font_size = (int)(layout_height/15);
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         cardButton = (Button) convertView.findViewById(R.id.myDevCard);
         Typeface star = Typeface.createFromAsset(context.getAssets(), "seeis.ttf");
-        Typeface normal = Typeface.createFromAsset(context.getAssets(), "classic.ttf");
+        Typeface normal = Typeface.createFromAsset(context.getAssets(), "blackjack.ttf");
 //        cardButton.setLayoutParams(new RelativeLayout.LayoutParams(height,height));
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
@@ -61,13 +64,16 @@ public class ListAdapter extends ArrayAdapter {
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
         if(!(number.contains("1")) && (number.contains("0")))  {
+            cardButton.setPadding(0,0,star_padding,star_padding);
             cardButton.setTypeface(star);
             cardButton.setText("A");
         }
         else {
+            cardButton.setPadding(0,0,num_padding,num_padding);
             cardButton.setTypeface(normal);
             cardButton.setText(number);
         }
+        cardButton.setTextSize(font_size);
         cardButton.setBackgroundResource(getBackResource(number));
         cardButton.setTag(pos);
 
