@@ -195,7 +195,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/redcard"
+            android:background="@drawable/r_board1"
             android:enabled="false"
             android:gravity="bottom|right"
             android:text=""
@@ -208,7 +208,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/greencard"
+            android:background="@drawable/g_board1"
             android:enabled="false"
             android:text=""
             android:gravity="bottom|right"
@@ -221,7 +221,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/whitecard"
+            android:background="@drawable/w_board1"
             android:enabled="false"
             android:gravity="bottom|right"
             android:text=""
@@ -234,7 +234,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bluecard"
+            android:background="@drawable/b_board1"
             android:enabled="false"
             android:gravity="bottom|right"
             android:text=""
@@ -247,7 +247,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/yellowcard"
+            android:background="@drawable/y_board1"
             android:enabled="false"
             android:text=""
             android:gravity="bottom|right"
@@ -365,18 +365,21 @@
         <ListView
             android:id="@+id/rCard_me"
             android:layout_width="match_parent"
+            android:divider="@null"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <ListView
             android:id="@+id/gCard_me"
             android:layout_width="match_parent"
+            android:divider="@null"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <ListView
             android:id="@+id/wCard_me"
             android:layout_width="match_parent"
+            android:divider="@null"
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
@@ -384,12 +387,14 @@
             android:id="@+id/bCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="@null"
             android:layout_weight="1" />
 
         <ListView
             android:id="@+id/yCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="@null"
             android:layout_weight="1" />
 
         <View

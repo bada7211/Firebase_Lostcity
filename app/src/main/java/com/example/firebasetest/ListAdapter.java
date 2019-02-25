@@ -24,12 +24,19 @@ public class ListAdapter extends ArrayAdapter {
     Button cardButton;
     String cardName;
 
-    ListAdapter(Context context, int resource, ArrayList<String> list, int height) {
+    int count_list;
+    int num_padding;
+
+    ListAdapter(Context context, int resource, ArrayList<String> list, int height, int count) {
         super(context, resource, list);
         numbers = list;
         layout_height = height;
+        count_list = count;
         // resource id 값 복사. (super로 전달된 resource를 참조할 방법이 없음.)
         this.resourceId = resource ;
+        num_padding = layout_height/12;
+        if(count_list<=7) layout_height = layout_height/7;
+        else layout_height = layout_height/count_list;
     }
 
     public interface ListBtnClickListener {
@@ -49,9 +56,9 @@ public class ListAdapter extends ArrayAdapter {
         ViewGroup.LayoutParams params = convertView.getLayoutParams();
         params.height = layout_height;
         convertView.setLayoutParams(params);
-        int num_padding = (int)(layout_height/10);
+
         int star_padding = (int)(layout_height/7);
-        int font_size = (int)(layout_height/15);
+        int font_size = (int)(layout_height/5);
 
         // 화면에 표시될 View(Layout이 inflate된)로부터 위젯에 대한 참조 획득
         cardButton = (Button) convertView.findViewById(R.id.myDevCard);
@@ -64,14 +71,14 @@ public class ListAdapter extends ArrayAdapter {
         final String number = (String) numbers.get(pos);
         // 아이템 내 각 위젯에 데이터 반영
         if(!(number.contains("1")) && (number.contains("0")))  {
-            cardButton.setPadding(0,0,star_padding,star_padding);
+            cardButton.setPadding(num_padding,0,0,0);
             cardButton.setTypeface(star);
             cardButton.setText("A");
         }
         else {
-            cardButton.setPadding(0,0,num_padding,num_padding);
+            cardButton.setPadding(num_padding,0,0,0);
             cardButton.setTypeface(normal);
-            cardButton.setText(number);
+            cardButton.setText(number.substring(1));
         }
         cardButton.setTextSize(font_size);
         cardButton.setBackgroundResource(getBackResource(number));

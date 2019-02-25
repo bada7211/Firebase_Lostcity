@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -69,6 +71,10 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     Typeface star;
     Typeface normal;
 
+    int deck_prepadding;
+    Animation animation1;
+    Animation animation2;
+
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
     HashMap<String, String> dev_last_card = new HashMap<String, String>();
 
@@ -107,11 +113,13 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
 
         height = getScreenSize(GestActivity.this).y;
         list_height = (int)(height / 4.3);
-        list_height = (int)(list_height / 12);
         grid_height = (int)(height / 7);
         num_padding = (int)(height/65);
         star_padding = (int)(height/45);
         font_size = (int)(height/100);
+
+        animation1 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.scale);
+        animation2 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.scale2);
 
         round.setText("On");
         database = FirebaseDatabase.getInstance();
@@ -187,16 +195,23 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     @Override
-    public void onListBtnClick(int position, View v) {
+    public void onListBtnClick(int position, View v, int padding_b, int padding_r) {
         if(my_state.equals("SelCard")||my_state.equals("Selected")) {
             if (curSelView == null) {
                 ((Button) v).setSelected(true);
+                ((Button) v).setPadding(0,0,padding_r,(padding_b*3));
+                deck_prepadding = padding_b;
                 curSelView = v;
             } else {
                 ((Button) v).setSelected(true);
                 preSelView = curSelView;
                 curSelView = v;
-                if (curSelView != preSelView) ((Button) preSelView).setSelected(false);
+                if (curSelView != preSelView) {
+                    ((Button) v).setPadding(0,0,padding_r,(padding_b*3));
+                    ((Button) preSelView).setSelected(false);
+                    ((Button) preSelView).setPadding(0,0,padding_r,deck_prepadding);
+                    deck_prepadding = padding_b;
+                }
             }
             my_selCard = myDeck_list.get(position);
             my_state = "Selected";
@@ -400,6 +415,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         else stateDb.child(room_name).child("State").setValue(round_count+"ROUNDH");
                         my_state = "Ready";
                     }
+                    board_deck.startAnimation(animation2);
                 }
             }
             @Override
@@ -456,10 +472,15 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                             curBoard.setText(card.substring(1));
                         }
                         curBoard.setTextSize(font_size);
+                        curBoard.setBackgroundResource(findBoardBack(color,true));
+                        curBoard.startAnimation(animation1);
                     }
                     else {
                         board_stack.get(color).pop();
-                        if (board_stack.get(color).isEmpty()) curBoard.setText("");
+                        if (board_stack.get(color).isEmpty()) {
+                            curBoard.setText("");
+                            curBoard.setBackgroundResource(findBoardBack(color,false));
+                        }
                         else {
                             String card = board_stack.get(color).peek();
                             if (!(card.contains("1")) && (card.contains("0"))) {
@@ -474,6 +495,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                             }
                             curBoard.setTextSize(font_size);
                         }
+                        curBoard.startAnimation(animation2);
 
                     }
                 }
@@ -513,7 +535,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,true).getText().toString());
                         findCurScoreView(s_color,true).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,true);
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list,list_height);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,myDev_list,list_height,myDev_list.size());
                         curListView.setAdapter(listAdapter);
                         curSelView.setSelected(false);
                         curListView.setEnabled(false);
@@ -549,7 +571,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                         int pre_score = Integer.parseInt(findCurScoreView(s_color,false).getText().toString());
                         findCurScoreView(s_color,false).setText(String.valueOf(score));
                         setTotalScore(score,pre_score,false);
-                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,list_height);
+                        listAdapter = new ListAdapter(GestActivity.this,R.layout.card_item,opntDev_list,list_height, opntDev_list.size());
                         curListView.setAdapter(listAdapter);
                     }
                 }
@@ -576,8 +598,11 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
 
         //보드초기화
         Button[] boards = {board_r,board_g,board_w,board_b,board_y};
+        int i = 0;
         for(Button board : boards) {
+            board.setBackgroundResource(findBoardBack(colors.get(i),false));
             board.setText("");
+            i++;
         }
         //리스트초기화
         ListView[] lists = {myList_r,myList_g,myList_w,myList_b,myList_y,
@@ -585,7 +610,7 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
         for(ListView list : lists) {
             ArrayList<String> myDev_list = new ArrayList<String>();
             myDev_list.clear();
-            listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list,list_height);
+            listAdapter = new ListAdapter(GestActivity.this, R.layout.card_item, myDev_list,list_height,myDev_list.size());
             list.setAdapter(listAdapter);
         }
         //내 덱 초기화
@@ -613,6 +638,23 @@ public class GestActivity extends AppCompatActivity implements GridAdapter.ListB
                 if(Integer.parseInt(card.substring(1))>Integer.parseInt(last_card.substring(1))) return true;
                 else return false;
             }
+        }
+    }
+
+    public int findBoardBack(String color,Boolean flag) {
+        if(flag){
+            if(color.equals("R")) return R.drawable.r_board2;
+            else if(color.equals("G")) return R.drawable.g_board2;
+            else if(color.equals("W")) return R.drawable.w_board2;
+            else if(color.equals("B")) return R.drawable.b_board2;
+            else return R.drawable.y_board2;
+        }
+        else{
+            if(color.equals("R")) return R.drawable.r_board1;
+            else if(color.equals("G")) return R.drawable.g_board1;
+            else if(color.equals("W")) return R.drawable.w_board1;
+            else if(color.equals("B")) return R.drawable.b_board1;
+            else return R.drawable.y_board1;
         }
     }
 

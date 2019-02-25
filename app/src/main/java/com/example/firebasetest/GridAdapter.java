@@ -23,6 +23,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
 
     Button cardButton;
 
+
     GridAdapter(Context context, int resource, ArrayList<String> list, ListBtnClickListener clickListener, int height) {
         super(context, resource, list);
         numbers = list;
@@ -34,7 +35,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
     }
 
     public interface ListBtnClickListener {
-        void onListBtnClick(int position, View v) ;
+        void onListBtnClick(int position, View v, int padding_b, int padding_r) ;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -87,7 +88,7 @@ public class GridAdapter extends ArrayAdapter implements View.OnClickListener {
     public void onClick(View v) {
         // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출.
         if (this.listBtnClickListener != null) {
-            this.listBtnClickListener.onListBtnClick((int)v.getTag(), v) ;
+            this.listBtnClickListener.onListBtnClick((int)v.getTag(), v, v.getPaddingBottom(), v.getPaddingRight()) ;
         }
     }
 
