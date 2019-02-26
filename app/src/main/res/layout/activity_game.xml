@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/total_back"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/game_back"
@@ -210,8 +211,8 @@
             android:layout_weight="1"
             android:background="@drawable/g_board1"
             android:enabled="false"
-            android:text=""
             android:gravity="bottom|right"
+            android:text=""
             android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
@@ -249,8 +250,8 @@
             android:layout_weight="1"
             android:background="@drawable/y_board1"
             android:enabled="false"
-            android:text=""
             android:gravity="bottom|right"
+            android:text=""
             android:textColor="@color/white2"
             android:textStyle="bold"
             app:fontFamily="@font/classic" />
@@ -365,37 +366,37 @@
         <ListView
             android:id="@+id/rCard_me"
             android:layout_width="match_parent"
-            android:divider="@null"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
         <ListView
             android:id="@+id/gCard_me"
             android:layout_width="match_parent"
-            android:divider="@null"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
         <ListView
             android:id="@+id/wCard_me"
             android:layout_width="match_parent"
-            android:divider="@null"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
         <ListView
             android:id="@+id/bCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
         <ListView
             android:id="@+id/yCard_me"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:divider="@null" />
 
         <View
             android:layout_width="match_parent"

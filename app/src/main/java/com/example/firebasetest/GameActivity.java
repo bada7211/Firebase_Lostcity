@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -59,6 +65,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     View curSelView;
     ListView curListView;
     ListView preListView;
+    LinearLayout total_back;
     Button curBoard;
     Button preBoard;
     int deck_count;
@@ -72,6 +79,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     int grid_height;
     int num_padding;
     int star_padding;
+    int right_padding;
     int font_size;
     Typeface star;
     Typeface normal;
@@ -82,6 +90,13 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
 
     HashMap<String, Stack<String>> board_stack = new HashMap<String, Stack<String>>();
     HashMap<String, String> dev_last_card = new HashMap<String, String>();
+
+    MediaPlayer mp_back;
+    MediaPlayer mp_card;
+    MediaPlayer mp_start;
+    MediaPlayer mp_room;
+    MediaPlayer mp_tern;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +126,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         total_score = (TextView) findViewById(R.id.total_score);
         star = Typeface.createFromAsset(this.getAssets(), "seeis.ttf");
         normal = Typeface.createFromAsset(this.getAssets(), "blackjack.ttf");
+        total_back = (LinearLayout) findViewById(R.id.total_back);
 
         setDevClickListener();
         setBoardClickListener();
@@ -119,12 +135,26 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
         height = getScreenSize(GameActivity.this).y;
         list_height = (int)(height / 4.3);
         grid_height = (int)(height / 7);
-        num_padding = (int)(height/65);
-        star_padding = (int)(height/45);
+        num_padding = (int)(height/70);
+        right_padding = (int)(height/45);
+        star_padding = (int)(height/50);
+
+
         font_size = (int)(height/100);
 
         animation1 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.scale);
         animation2 = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.scale2);
+
+        mp_back = MediaPlayer.create(this,R.raw.game);
+        mp_back.setLooping(true);
+
+        mp_room = MediaPlayer.create(this,R.raw.room);
+        mp_room.setLooping(true);
+        mp_room.start();
+        mp_tern = MediaPlayer.create(this,R.raw.tern);
+
+        mp_card = MediaPlayer.create(this,R.raw.getcard);
+        mp_start = MediaPlayer.create(this,R.raw.end);
 
         database = FirebaseDatabase.getInstance();
         roomDb = database.getReference().child("RoomList").child(room_name).child("State");
@@ -135,6 +165,8 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                     String game_state = dataSnapshot.getValue().toString();
                     //카드 나눠주기 시작
                     if (game_state.equals("On")) {
+                        mp_room.stop();
+                        mp_start.start();
                         round.setText("On");
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference("RoomList");
@@ -157,16 +189,23 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         round.setText("1ROUND");
                         total_score.setText(my_tscore +" : "+opnt_tscore);
                         stateDb.child(room_name).child("State").setValue("Start");
+                        mp_back.start();
                     }
                     //1라운드 호스트턴
                     if(game_state.contains("ROUNDH")){
                         findCurList("Clear",true);
                         my_state = "SelCard";
+                        total_back.setBackgroundResource(R.drawable.game_back2);
+                        mp_tern.start();
+                    }
+                    if(game_state.contains("ROUNDG")){
+                        total_back.setBackgroundResource(R.drawable.game_back);
                     }
                     if(game_state.contains("END")){
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference("RoomList").child(room_name);
                         if(game_state.contains("3")) {
+                            mp_start.start();
                             stateDb.child("State").setValue("Finish");
                             my_tscore += my_score;
                             opnt_tscore += opnt_score;
@@ -179,6 +218,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                             //TODO:: 게임종료
                         }
                         else{
+                            mp_start.start();
                             stateDb.child("Host").removeValue();
                             stateDb.child("Gest").removeValue();
                             stateDb.child("Game").child("Deck").removeValue();
@@ -214,14 +254,18 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
     }
 
     @Override protected void onDestroy() {
-//        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-//        DatabaseReference roomDb2 = database2.getReference("RoomList");
-//        roomDb2.child(room_name).removeValue();
+        mp_back.stop();
+        mp_room.stop();
+        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
+        DatabaseReference roomDb2 = database2.getReference("RoomList");
+        roomDb2.child(room_name).removeValue();
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
+        mp_back.stop();
+        mp_room.stop();
         FirebaseDatabase database2 = FirebaseDatabase.getInstance();
         DatabaseReference roomDb2 = database2.getReference("RoomList");
         roomDb2.child(room_name).removeValue();
@@ -249,6 +293,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             }
             my_selCard = myDeck_list.get(position);
             my_state = "Selected";
+            mp_card.start();
             findCurList(my_selCard.substring(0,1),true);
             if(preListView!=null) preListView.setEnabled(false);
             if(preBoard!=null) preBoard.setEnabled(false);
@@ -455,6 +500,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         my_state = "Ready";
                     }
                     board_deck.startAnimation(animation2);
+                    mp_card.start();
                 }
             }
             @Override
@@ -475,6 +521,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                 }
                 gridAdapter = new GridAdapter(GameActivity.this,R.layout.my_deck,myDeck_list,GameActivity.this, grid_height);
                 gridView.setAdapter(gridAdapter);
+                mp_card.start();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -502,13 +549,14 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                             curBoard.setText("A");
                         }
                         else {
-                            curBoard.setPadding(0,0,num_padding,num_padding);
+                            curBoard.setPadding(0,0,right_padding,num_padding);
                             curBoard.setTypeface(normal);
                             curBoard.setText(card.substring(1));
                         }
                         curBoard.setTextSize(font_size);
                         curBoard.setBackgroundResource(findBoardBack(color,true));
                         curBoard.startAnimation(animation1);
+                        mp_card.start();
                     }
                     else {
                         board_stack.get(color).pop();
@@ -524,13 +572,14 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                                 curBoard.setText("A");
                             }
                             else {
-                                curBoard.setPadding(0,0,num_padding,num_padding);
+                                curBoard.setPadding(0,0,right_padding,num_padding);
                                 curBoard.setTypeface(normal);
                                 curBoard.setText(card.substring(1));
                             }
                             curBoard.setTextSize(font_size);
                         }
                         curBoard.startAnimation(animation2);
+                        mp_card.start();
                     }
                 }
             }
@@ -571,6 +620,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         setTotalScore(score,pre_score,true);
                         listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,myDev_list,list_height, myDev_list.size());
                         curListView.setAdapter(listAdapter);
+                        mp_card.start();
                         my_state = "SetCardDev";
                         setBoardEnable(true);
                     }
@@ -605,6 +655,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         setTotalScore(score,pre_score,false);
                         listAdapter = new ListAdapter(GameActivity.this,R.layout.card_item,opntDev_list,list_height, opntDev_list.size());
                         curListView.setAdapter(listAdapter);
+                        mp_card.start();
                     }
                 }
                 @Override
@@ -629,11 +680,13 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
             findCurScoreView(color,false).setText("0");
         }
 
+
         //보드초기화
         Button[] boards = {board_r,board_g,board_w,board_b,board_y};
         int i = 0;
         for(Button board : boards) {
             board.setBackgroundResource(findBoardBack(colors.get(i),false));
+            dev_last_card.put(colors.get(i),"0000");
             board.setText("");
             i++;
         }
