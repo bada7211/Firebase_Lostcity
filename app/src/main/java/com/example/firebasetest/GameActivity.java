@@ -170,7 +170,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                         round.setText("On");
                         FirebaseDatabase state_base = FirebaseDatabase.getInstance();
                         DatabaseReference stateDb = state_base.getReference("RoomList");
-                        stateDb.child(room_name).child("Game").child("DeckCount").setValue(5);
+                        stateDb.child(room_name).child("Game").child("DeckCount").setValue(44);
                         stateDb.child(room_name).child("Game").child("Score").setValue("0 : 0");
                         stateDb.child(room_name).child("Game").child("Round").setValue(1);
                         Card card = new Card();
@@ -237,7 +237,7 @@ public class GameActivity extends AppCompatActivity implements GridAdapter.ListB
                             round_count += 1;
                             round.setText(round_count + "ROUND");
                             total_score.setText(my_tscore +" : "+opnt_tscore);
-                            stateDb.child("Game").child("DeckCount").setValue(5);
+                            stateDb.child("Game").child("DeckCount").setValue(44);
                             stateDb.child("Game").child("Score").setValue("0 : 0");
                             stateDb.child("Game").child("Round").setValue(round_count);
                             if(round_count==2) stateDb.child("State").setValue(round_count+ "ROUNDG");
